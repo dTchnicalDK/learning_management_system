@@ -4,12 +4,14 @@ import { Label } from "@/components/ui/label";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Loader2Icon } from "lucide-react";
 import { useState } from "react";
+import { useSelector, useDispatch } from "react-redux";
 
 const loginInitials = {
   email: "",
   password: "",
 };
 const singupInitials = {
+  userName: "",
   email: "",
   password: "",
   repassword: "",
@@ -29,30 +31,39 @@ const LoginPage = () => {
       //   console.log("login change detected", signupFields);
     }
   };
+
   const handleSubmit = (e, submitValue) => {
     e.preventDefault();
-    setIsPasswordMatching(true);
-    if (submitValue === "submitLogin") {
-      console.log("data", loginFields);
-    } else {
-      if (signupFields.password !== signupFields.repassword) {
-        setIsPasswordMatching(false);
-        return console.log("password not match");
-      }
-      console.log("data", signupFields);
-    }
+    // setIsPasswordMatching(true);
+    const inputData =
+      submitValue === "submitLogin" ? loginFields : signupFields;
+    console.log("data", inputData);
   };
+
   return (
-    <div>
+    <div className="h-[60vh]">
       <Tabs defaultValue="login" className="w-[400px]">
         <TabsList>
           <TabsTrigger value="login">Login</TabsTrigger>
           <TabsTrigger value="signup">Sing Up</TabsTrigger>
         </TabsList>
         <TabsContent value="login">
-          <div className="login-form h-[60vh] flex flex-col justify-around gap-5">
+          <div>
             <h1 className="text-center">Login here</h1>
-            <form>
+            <form className="login-form flex flex-col justify-around h-[40vh]  gap-5">
+              <div className="grid w-full max-w-sm items-center gap-3">
+                <Label htmlFor="userName">User Name</Label>
+                <Input
+                  type="email"
+                  name="userName"
+                  value={loginFields.userName}
+                  onChange={(e) => {
+                    handleChange(e, "forlogin");
+                  }}
+                  required
+                  placeholder="Email"
+                />
+              </div>
               <div className="grid w-full max-w-sm items-center gap-3">
                 <Label htmlFor="email">Email</Label>
                 <Input
@@ -96,9 +107,9 @@ const LoginPage = () => {
         </TabsContent>
         {/* -------------------------------------sign up---------------------- */}
         <TabsContent value="signup">
-          <div className="sign-up-form h-[60vh] flex flex-col justify-around gap-5">
+          <div>
             <h1 className="text-center">Sing up here</h1>
-            <form>
+            <form className="sign-up-form h-[40vh] flex flex-col justify-around gap-5">
               <div className="grid w-full max-w-sm items-center gap-3">
                 <Label htmlFor="email">Email</Label>
                 <Input
