@@ -3,6 +3,7 @@ import "dotenv/config";
 import cors from "cors";
 import cookieParser from "cookie-parser";
 import connectDb from "./db/connectDb.js";
+import userRouter from "./routes/user.router.js";
 
 const app = express();
 const port = process.env.PORT || 4000;
@@ -21,8 +22,9 @@ app.use(cookieParser());
 //middlewares
 
 //api routes
+app.use("/api/v1/user", userRouter);
 
-//routes
+//root routes tesing purpose
 app.use("/", (req, res, next) => {
   res.status(200).json({ success: true, message: "welcome to homepage" });
 });
