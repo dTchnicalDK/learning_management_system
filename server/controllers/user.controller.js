@@ -68,13 +68,13 @@ export const loginUser = async (req, res) => {
       isUserRegistered.password
     );
     // console.log("isPasswordMatch", isPasswordMatch);
-
     if (!isPasswordMatch) {
       return res.status(400).json({
         success: false,
         message: "Wrong credentials, check email or password!",
       });
     }
+
     const sanitizedUser = isUserRegistered.toObject();
     delete sanitizedUser.password;
     const token = createToken(sanitizedUser);
@@ -97,5 +97,20 @@ export const loginUser = async (req, res) => {
       success: false,
       message: error.message || "login server error!",
     });
+  }
+};
+
+///////////////////signout user//////////////////
+export const signoutUser = async (req, res) => {
+  try {
+    res
+      .cookie("token", "", { maxAge: 0 })
+      .status(200)
+      .json({ message: "user loggesd out successfully", success: true });
+  } catch (error) {
+    console.log(error);
+    return res
+      .status(500)
+      .json({ success: false, message: "Failed to logout" });
   }
 };
