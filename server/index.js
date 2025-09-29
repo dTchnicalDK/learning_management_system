@@ -7,11 +7,12 @@ import userRouter from "./routes/user.router.js";
 
 const app = express();
 const port = process.env.PORT || 4000;
+// console.log("port", port);
 
 //default middlewares
 app.use(
   cors({
-    origin: process.env.FRONTENED_URL || ` http://localhost:${port}`,
+    origin: process.env.FRONTENED_URL || `http://localhost:5173`,
     credentials: true,
   })
 );
