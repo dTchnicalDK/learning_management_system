@@ -100,17 +100,19 @@ const LoginPage = () => {
   ]);
 
   return (
-    <div className="h-[60vh]">
+    <div className="h-[60vh] ">
       <Tabs defaultValue="login" className="w-[400px]">
-        <TabsList>
-          <TabsTrigger value="login">Login</TabsTrigger>
+        <TabsList className="w-full">
+          <TabsTrigger value="login" className="">
+            Login
+          </TabsTrigger>
           <TabsTrigger value="signup">Sing Up</TabsTrigger>
         </TabsList>
         <TabsContent value="login">
-          <div>
+          <div className="flex flex-col justify-center items-center w-full">
             <h1 className="text-center">Login here</h1>
-            <form className="login-form flex flex-col justify-around h-[40vh]  gap-5">
-              <div className="grid w-full max-w-sm items-center gap-3">
+            <form className="login-form flex flex-col justify-around w-full h-[40vh]  gap-5">
+              <div className="grid col-span-1 items-center gap-3">
                 <Label htmlFor="email">Email</Label>
                 <Input
                   type="email"
@@ -123,7 +125,7 @@ const LoginPage = () => {
                   placeholder="Email"
                 />
               </div>
-              <div className="grid w-full max-w-sm items-center gap-3">
+              <div className="grid w-full items-center gap-3">
                 <Label htmlFor="password">Password</Label>
                 <Input
                   type="password"
@@ -155,8 +157,8 @@ const LoginPage = () => {
         <TabsContent value="signup">
           <div>
             <h1 className="text-center">Sing up here</h1>
-            <form className="sign-up-form h-[40vh] flex flex-col justify-around gap-5">
-              <div className="grid w-full max-w-sm items-center gap-3">
+            <form className="sign-up-form max-h-[60vh] flex flex-col justify-center gap-5">
+              <div className="grid w-full items-center gap-3">
                 <Label htmlFor="userName">username</Label>
                 <Input
                   type="text"
@@ -169,7 +171,7 @@ const LoginPage = () => {
                   placeholder="userName"
                 />
               </div>
-              <div className="grid w-full max-w-sm items-center gap-3">
+              <div className="grid w-full items-center gap-3">
                 <Label htmlFor="email">Email</Label>
                 <Input
                   type="email"
@@ -182,7 +184,7 @@ const LoginPage = () => {
                   placeholder="Email"
                 />
               </div>
-              <div className="grid w-full max-w-sm items-center gap-3">
+              <div className="grid w-full items-center gap-3">
                 <Label htmlFor="password">Password</Label>
                 <Input
                   type="password"
@@ -195,7 +197,7 @@ const LoginPage = () => {
                   placeholder="your password"
                 />
               </div>
-              <div className="grid w-full max-w-sm items-center gap-3">
+              <div className="grid w-full items-center gap-3">
                 <Label htmlFor="repassword">Re-type your password </Label>
                 <Input
                   type="password"
