@@ -27,7 +27,7 @@ const NavBar = () => {
   return (
     <div>
       {/* ------------for pc--------------------------------- */}
-      <div className="fixed bg-white dark:bg-gray-900 top-0 left-0 right-0 z-30 hidden md:flex justify-between items-center px-8 py-2">
+      <div className="fixed bg-white dark:bg-stone-900 top-0 left-0 right-0 z-30 hidden md:flex justify-between items-center px-8 py-2">
         <div className="left font-bold text-2xl flex justify-center items-center gap-5">
           <FaSchool />
           <h1>Edu-Hub</h1>
@@ -69,7 +69,7 @@ const NavBar = () => {
           <ThemeToggle />
         </div>
       </div>
-      <div className="flex md:hidden">
+      <div className="absolute left-3 top-0 md:hidden">
         <MobileNavBar />
       </div>
     </div>

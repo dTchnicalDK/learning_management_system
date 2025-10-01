@@ -1,15 +1,21 @@
+import { BrowserRouter, Route, Routes } from "react-router";
 import "./App.css";
 import NavBar from "./components/NavBar";
-import { Button } from "./components/ui/button";
 import LoginPage from "./pages/LoginPage";
+import HeroSection from "./pages/student/HeroSection";
+import RootLayout from "./components/layout/RootLayout";
+import Course from "./pages/student/Course";
+import StudentHomePage from "./pages/student/StudentHomePage";
 
 function App() {
   return (
     <>
-      <NavBar />
-      <div className="flex min-h-svh flex-col items-center justify-center">
-        <LoginPage />
-      </div>
+      <Routes>
+        <Route path="/" element={<RootLayout />}>
+          <Route index element={<StudentHomePage />} />
+          <Route path="login" element={<LoginPage />} />
+        </Route>
+      </Routes>
     </>
   );
 }
