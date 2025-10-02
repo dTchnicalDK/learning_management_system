@@ -27,7 +27,7 @@ const NavBar = () => {
   return (
     <div>
       {/* ------------for pc--------------------------------- */}
-      <div className="fixed bg-white dark:bg-stone-900 top-0 left-0 right-0 z-30 hidden md:flex justify-between items-center px-8 py-2">
+      <div className="fixed bg-white dark:bg-stone-900 top-0 left-0 right-0 z-30 hidden md:flex justify-between items-center px-8 py-4 shadow-xl">
         <div className="left font-bold text-2xl flex justify-center items-center gap-5">
           <FaSchool />
           <h1>Edu-Hub</h1>
@@ -78,19 +78,28 @@ const NavBar = () => {
 
 const MobileNavBar = () => {
   return (
-    <div className="flex justify-start items-center gap-5 px-5 py-2 ">
+    <div className="fixed z-30 top-0 left-0 right-0 bg-white dark:bg-stone-900 h-14 flex justify-between items-center gap-5 px-3 py-2 ">
+      <div className="left w-3/6 flex justify-start gap-2 items-center text-2xl">
+        <FaSchool />
+        <h1 className=" font-bold">Edu-Hub</h1>
+      </div>
+
       <Sheet>
-        <SheetTrigger asChild>
-          <Button size="icon" variant="ghost" className="hover: bg-gray-600">
-            <MenuIcon />
-          </Button>
+        <SheetTrigger>
+          <MenuIcon />
         </SheetTrigger>
         <SheetContent>
           <SheetHeader>
-            <SheetTitle>
-              <Link>
-                <h1>Edu-Hub</h1>
-              </Link>
+            <SheetTitle asChild>
+              <div className="flex justify-start items-center gap-10">
+                <div className="flex justify-start items-center gap-2 font-bold text-2xl">
+                  <FaSchool />
+                  <Link>
+                    <h1>Edu-Hub</h1>
+                  </Link>
+                </div>
+                <ThemeToggle />
+              </div>
             </SheetTitle>
           </SheetHeader>
           <Separator />

@@ -6,7 +6,7 @@ const RootLayout = () => {
   return (
     <div className="flex justify-center items-center min-h-screen">
       <NavBar />
-      <div className="mt-10 flex justify-center items-center">
+      <div className="mt-12 md:mt-15 flex justify-center items-center">
         <Outlet />
       </div>
     </div>

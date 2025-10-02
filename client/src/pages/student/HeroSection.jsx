@@ -15,7 +15,7 @@ const HeroSection = () => {
         empowering minds to innovate and drive progress, thereby achieving goals
         that matter.
       </p>
-      <form className="relative w-2/3">
+      <form className="relative w-full md:w-2/3">
         <Input
           type="search"
           placeholder="search courses"
@@ -25,6 +25,12 @@ const HeroSection = () => {
           search
         </Button>
       </form>
+      <Button
+        variant="outline"
+        className="bg-transparent  text-xl cursor-pointer "
+      >
+        Explore Courses
+      </Button>
     </div>
   );
 };
