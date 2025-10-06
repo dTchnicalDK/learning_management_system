@@ -1,6 +1,7 @@
 import { User } from "../models/user.models.js";
 import bcrypt from "bcryptjs";
 import createToken from "../helper/createToken.js";
+import { uploadToMediaCloudinary } from "../utility/coudinary.js";
 
 ///////////////Register User//////////
 export const registerUser = async (req, res) => {
@@ -77,7 +78,8 @@ export const loginUser = async (req, res) => {
 
     const sanitizedUser = isUserRegistered.toObject();
     delete sanitizedUser.password;
-    const token = createToken(sanitizedUser);
+    const token = await createToken(sanitizedUser);
+    console.log("token", token);
 
     res
       .cookie("token", token, {
@@ -112,5 +114,73 @@ export const signoutUser = async (req, res) => {
     return res
       .status(500)
       .json({ success: false, message: "Failed to logout" });
+  }
+};
+
+///////////////////Get User By Id /////////////////////
+export const getUserById = async (req, res) => {
+  const id = req.userId;
+
+  try {
+    if (!id) {
+      return res
+        .status(400)
+        .json({ success: false, message: "id is must to get user!" });
+    }
+    const fetchedUser = await User.findById(id).select("-password");
+    if (!fetchedUser) {
+      return res
+        .status(404)
+        .json({ success: false, message: "user not registered!" });
+    }
+    return res
+      .status(200)
+      .json({ success: true, message: "user fetched!", user: fetchedUser });
+  } catch (error) {
+    console.log("getUserById error", error);
+    res.status(500).json({
+      success: false,
+      message: error.message || "something went wrong!",
+    });
+  }
+};
+
+///////////////////Get all user/////////////////////
+export const getAllUsers = async (req, res) => {
+  try {
+    const fetchedAllUser = await User.find();
+
+    return res
+      .status(200)
+      .json({ success: true, message: "user fetched!", user: fetchedAllUser });
+  } catch (error) {
+    console.log("getUserById error", error);
+    res.status(500).json({
+      success: false,
+      message: error.message || "something went wrong!",
+    });
+  }
+};
+
+//////////////////edit Profile////////////////////////
+export const editProfile = async (req, res) => {
+  try {
+    const id = req.userId;
+    const user = await User.findById({ id });
+    if (!user) {
+      return res.status(404).json({ message: "id does not exits!" });
+    }
+    const { userName } = req.formData;
+    const file = req.file;
+    console.log("file in request", file);
+
+    const fileUrl = uploadToMediaCloudinary(file.path);
+
+    const updatedData = await User.findByIdAndUpdate({
+      userName,
+      photoURL: fileUrl,
+    });
+  } catch (error) {
+    res.status(500).json({ message: error.message || "internal server error" });
   }
 };

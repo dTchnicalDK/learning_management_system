@@ -45,7 +45,9 @@ const NavBar = () => {
                 <DropdownMenuContent>
                   <DropdownMenuLabel>My Account</DropdownMenuLabel>
                   <DropdownMenuSeparator />
-                  <DropdownMenuItem>Profile</DropdownMenuItem>
+                  <DropdownMenuItem>
+                    <Link to="/student/profile">Profile</Link>
+                  </DropdownMenuItem>
                   <DropdownMenuItem>courses</DropdownMenuItem>
                   <DropdownMenuItem>settings</DropdownMenuItem>
                   <DropdownMenuSeparator />
@@ -88,7 +90,7 @@ const MobileNavBar = () => {
         <SheetTrigger>
           <MenuIcon />
         </SheetTrigger>
-        <SheetContent>
+        <SheetContent aria-describedby={null}>
           <SheetHeader>
             <SheetTitle asChild>
               <div className="flex justify-start items-center gap-10">

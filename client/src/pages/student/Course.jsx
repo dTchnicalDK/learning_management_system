@@ -36,7 +36,7 @@ const Course = () => {
                   variant="default"
                   className="bg-blue-500 dark:bg-blue-900 text-white"
                 >
-                  buy now
+                  Advanced
                 </Badge>
               </div>
               <h2>price: ₹ 300</h2>
