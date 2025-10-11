@@ -4,21 +4,52 @@ dotenv.config({});
 
 // Configuration
 cloudinary.config({
-  // cloud_name: 'dtek5slnq',
   cloud_name: process.env.CLOUD_NAME,
   api_key: process.env.API_KEY,
-  api_secret: process.env.API_SECRET, // Click 'View API Keys' above to copy your API secret
+  api_secret: process.env.API_SECRET,
 });
 
 // Upload an image
-export const uploadToMediaCloudinary = async (filePath) => {
-  const uploadResult = await cloudinary.uploader
-    .upload(filePath)
-    .catch((error) => {
-      console.log(error);
-    });
-  console.log("uploadResult", uploadResult);
-  return uploadResult.secure_url;
+export const uploadToMediaCloudinary = async (file) => {
+  try {
+    const uploadResult = await cloudinary.uploader
+      .upload(file, { resource_type: "auto", folder: "LMS/profilePhoto" })
+      .catch((error) => {
+        console.log(error);
+      });
+    return uploadResult;
+  } catch (error) {
+    console.log("coudinary upload error", error);
+  }
 };
 
-//delete
+//delete media
+export const deleteMediaFromCloudinary = async (publicId) => {
+  if (!publicId) {
+    return { result: "publicId missing!" };
+  }
+  try {
+    const isDeleteSuccessfull = await cloudinary.uploader.destroy(publicId, {
+      invalidate: true,
+      resource_type: "image",
+    });
+    console.log("cloudinary resp", isDeleteSuccessfull);
+    if (isDeleteSuccessfull.result === "ok") {
+      console.log("deleted");
+      return isDeleteSuccessfull;
+    }
+  } catch (error) {
+    console.log("delete from cloudinary error", error);
+  }
+};
+
+//delete video from cloudinary
+export const deleteVideoFromCloudinary = async (videoPublicId) => {
+  try {
+    const isVideoDeleted = await cloudinary.uploader.destroy(videoPublicId, {
+      resource_type: "video",
+    });
+  } catch (error) {
+    console.log("video delete error from cloudinary", error);
+  }
+};

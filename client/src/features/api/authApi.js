@@ -1,5 +1,5 @@
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
-import { userLoggedIn, userLooggedOut } from "../authSlice";
+import { userLoggedIn, userLoggedOut } from "../authSlice";
 const USER_API =
   import.meta.VITE_USER_API || "http://localhost:3000/api/v1/user/";
 
@@ -36,7 +36,7 @@ export const authApi = createApi({
       }),
       async onQueryStarted(_, { queryFulfilled, dispatch }) {
         try {
-          dispatch(userLooggedOut());
+          dispatch(userLoggedOut());
         } catch (error) {
           console.log("logout error", error);
         }
@@ -53,6 +53,40 @@ export const authApi = createApi({
         url: "userbyid",
         method: "GET",
       }),
+      async onQueryStarted(_, { queryFulfilled, dispatch }) {
+        try {
+          const result = await queryFulfilled;
+          dispatch(userLoggedIn({ user: result.data.user }));
+        } catch (error) {
+          console.log(error);
+        }
+      },
+    }),
+    updateProfile: builder.mutation({
+      query: (formData) => ({
+        url: "update-user",
+        method: "PUT",
+        body: formData,
+      }),
+      // async onQueryStarted(_, { queryFulfilled, dispatch }) {
+      //   try {
+      //     const result = await queryFulfilled;
+      //     dispatch(userLoggedIn({ user: result.data.user }));
+      //   } catch (error) {
+      //     console.log("loginUser error", error);
+      //   }
+      // },
+
+      //   async onQueryStarted(_, { queryFulfilled, dispatch }) {
+      //     try {
+      //       const updateUserResult = await queryFulfilled;
+
+      //       console.log("updateProfileAt rtkAuthApi", updateUserResult);
+      //       // dispatch(userLoggedIn({user: updateUserResult.data.user}))
+      //     } catch (error) {
+      //       console.log("updateUser rtkApi error", error);
+      //     }
+      //   },
     }),
   }),
 });
@@ -63,4 +97,5 @@ export const {
   useLogOutUserMutation,
   useGetAllUserMutation,
   useGetCurrentUserProfileQuery,
+  useUpdateProfileMutation,
 } = authApi;

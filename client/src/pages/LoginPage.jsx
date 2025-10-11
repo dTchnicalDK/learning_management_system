@@ -8,6 +8,7 @@ import {
 } from "@/features/api/authApi";
 import { Loader2Icon } from "lucide-react";
 import { useEffect, useState } from "react";
+import { useNavigate } from "react-router";
 import { toast } from "sonner";
 
 const loginInitials = {
@@ -25,6 +26,7 @@ const LoginPage = () => {
   const [loginFields, setLoginFields] = useState(loginInitials);
   const [signupFields, setSignupFields] = useState(signupInitials);
   const [isPasswordMatching, setIsPasswordMatching] = useState(true);
+  const navigate = useNavigate();
   const [
     registerUser,
     {
@@ -70,12 +72,13 @@ const LoginPage = () => {
     const action = submitValue === "submitLogin" ? loginUser : registerUser;
     try {
       const response = await action(inputData).unwrap();
-      console.log("data", response);
+      navigate("/student");
+      // console.log("data", response);
     } catch (error) {
       console.log("handle submit error", error);
     }
   };
-  // toating Message
+  // toasting Message
   useEffect(() => {
     if (registerSuccess && registerData) {
       toast.success(registerData.message || "Signup successful custom");
@@ -146,9 +149,16 @@ const LoginPage = () => {
                   handleSubmit(e, "submitLogin");
                 }}
                 size="sm"
+                disabled={loginLoading}
+                className="cursor-pointer"
               >
-                {/* <Loader2Icon className="animate-spin" /> */}
-                Login now
+                {loginLoading ? (
+                  <div className="flex justify-center items-center gap-2">
+                    Loggin in.. <Loader2Icon className="animate-spin" />
+                  </div>
+                ) : (
+                  <>Login now</>
+                )}
               </Button>
             </form>
           </div>

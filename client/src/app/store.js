@@ -9,8 +9,11 @@ export const store = configureStore({
 });
 
 // const initializeApp = async () => {
-//   await store.dispatch(
-//     authApi.endpoints.loadUser.initiate({}, { forceRefetch: true })
-//   );
-// };
-// initializeApp();
+//     await appStore.dispatch(authApi.endpoints.loadUser.initiate({},{forceRefetch:true}))
+// }
+const initializeApp = async () => {
+  await store.dispatch(
+    authApi.endpoints.getCurrentUserProfile.initiate({}, { forceRefetch: true })
+  );
+};
+initializeApp();

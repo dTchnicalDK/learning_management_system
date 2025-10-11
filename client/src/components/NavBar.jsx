@@ -1,5 +1,5 @@
 import { FaSchool } from "react-icons/fa";
-import React from "react";
+import React, { useEffect } from "react";
 import { Button } from "./ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar";
 import {
@@ -18,27 +18,62 @@ import {
   SheetTitle,
   SheetTrigger,
 } from "./ui/sheet";
-import { Link } from "react-router";
+import { Link, useNavigate } from "react-router";
 import { Separator } from "@radix-ui/react-dropdown-menu";
 import { ThemeToggle } from "./DarkTheme";
+import { useSelector } from "react-redux";
+import { useLogOutUserMutation } from "@/features/api/authApi";
+import { toast } from "sonner";
 
 const NavBar = () => {
-  const isLoggedIn = true;
+  const { user, isAuthenticated } = useSelector((state) => state.auth);
+  const [logOutUser, { data, isLoading, isSuccess, error }] =
+    useLogOutUserMutation();
+  const navigate = useNavigate();
+
+  console.log("user", user);
+  const handleLogout = async () => {
+    try {
+      await logOutUser();
+      navigate("/login");
+    } catch (error) {
+      toast.error(error.message || "something went wrong");
+    }
+  };
+
+  useEffect(() => {
+    if (isSuccess) {
+      toast.success(data.message || "loggedout");
+    }
+    if (error) {
+      toast.error(error.data?.message || "logoutError");
+    }
+  }, [isSuccess, error]);
+
   return (
     <div>
       {/* ------------for pc--------------------------------- */}
       <div className="fixed bg-white dark:bg-stone-900 top-0 left-0 right-0 z-30 hidden md:flex justify-between items-center px-8 py-4 shadow-xl">
-        <div className="left font-bold text-2xl flex justify-center items-center gap-5">
-          <FaSchool />
-          <h1>Edu-Hub</h1>
-        </div>
+        <Link to="/">
+          <div className="left font-bold text-2xl flex justify-center items-center gap-5">
+            <FaSchool />
+            <h1>Edu-Hub</h1>
+          </div>
+        </Link>
         <div className="right flex justify-center items-center gap-8">
-          {isLoggedIn ? (
+          {isAuthenticated ? (
             <>
               <DropdownMenu>
                 <DropdownMenuTrigger>
                   <Avatar className="cursor-pointer">
-                    <AvatarImage src="https://github.com/shadcn.png" />
+                    <AvatarImage
+                      src={
+                        user && user.photoURL
+                          ? user.photoURL
+                          : "https://github.com/shadcn.png"
+                      }
+                    />
+
                     <AvatarFallback>CN</AvatarFallback>
                   </Avatar>
                 </DropdownMenuTrigger>
@@ -48,13 +83,21 @@ const NavBar = () => {
                   <DropdownMenuItem>
                     <Link to="/student/profile">Profile</Link>
                   </DropdownMenuItem>
-                  <DropdownMenuItem>courses</DropdownMenuItem>
+                  <DropdownMenuItem>
+                    {" "}
+                    <Link to={"/student"}>courses</Link>{" "}
+                  </DropdownMenuItem>
                   <DropdownMenuItem>settings</DropdownMenuItem>
                   <DropdownMenuSeparator />
-                  <DropdownMenuItem className="flex justify-between items-center">
+                  <DropdownMenuItem
+                    onClick={handleLogout}
+                    className="flex justify-between items-center"
+                  >
                     Logout
                     <Button size="icon" variant="ghost">
+                      {/* <div className="flex justify-center items-center gap-2"> */}
                       <LogOutIcon />
+                      {/* </div> */}
                     </Button>
                   </DropdownMenuItem>
                 </DropdownMenuContent>
