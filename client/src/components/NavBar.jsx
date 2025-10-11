@@ -105,10 +105,14 @@ const NavBar = () => {
             </>
           ) : (
             <>
-              <Button variant="outline" className="cursor-pointer">
-                Login
-              </Button>
-              <Button className="cursor-pointer">SignUp</Button>
+              <Link to="/login">
+                <Button variant="outline" className="cursor-pointer">
+                  Login
+                </Button>
+              </Link>
+              <Link to="/signup">
+                <Button className="cursor-pointer">SignUp</Button>
+              </Link>
             </>
           )}
           <ThemeToggle />

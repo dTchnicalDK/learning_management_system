@@ -12,7 +12,8 @@ function App() {
       <Routes>
         <Route path="/" element={<RootLayout />}>
           <Route index element={<StudentHomePage />} />
-          <Route path="login" element={<LoginPage />} />
+          <Route path="/:tab" element={<LoginPage />} />
+          {/* <Route path="/:tab" element={<LoginPage />} /> */}
         </Route>
         <Route path="/student" element={<RootLayout />}>
           <Route index element={<EnrolledCourses />} />

@@ -8,7 +8,7 @@ import {
 } from "@/features/api/authApi";
 import { Loader2Icon } from "lucide-react";
 import { useEffect, useState } from "react";
-import { useNavigate } from "react-router";
+import { useNavigate, useParams } from "react-router";
 import { toast } from "sonner";
 
 const loginInitials = {
@@ -26,6 +26,9 @@ const LoginPage = () => {
   const [loginFields, setLoginFields] = useState(loginInitials);
   const [signupFields, setSignupFields] = useState(signupInitials);
   const [isPasswordMatching, setIsPasswordMatching] = useState(true);
+  const params = useParams();
+
+  // console.log(params.tab);
   const navigate = useNavigate();
   const [
     registerUser,
@@ -104,7 +107,7 @@ const LoginPage = () => {
 
   return (
     <div className="h-[60vh] ">
-      <Tabs defaultValue="login" className="w-[400px]">
+      <Tabs defaultValue={params.tab} className="w-[400px]">
         <TabsList className="w-full">
           <TabsTrigger value="login" className="">
             Login
