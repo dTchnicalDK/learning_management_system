@@ -269,8 +269,6 @@ export const editProfile = async (req, res) => {
 
       // Now that the upload is successful, delete the old file
       if (oldPublicId) {
-        // Log the old public ID to confirm its value
-        // console.log(`Attempting to delete old publicId: ${oldPublicId}`);
         await deleteMediaFromCloudinary(oldPublicId).catch((err) =>
           console.error("Cloudinary deletion failed:", err)
         );
