@@ -4,6 +4,7 @@ import cors from "cors";
 import cookieParser from "cookie-parser";
 import connectDb from "./db/connectDb.js";
 import userRouter from "./routes/user.router.js";
+import tutorRouter from "./routes/course.routes.js";
 
 const app = express();
 const port = process.env.PORT || 4000;
@@ -24,11 +25,12 @@ app.use(cookieParser());
 
 //api routes
 app.use("/api/v1/user", userRouter);
+app.use("/api/v1/tutor", tutorRouter);
 
-//root routes tesing purpose
-app.use("/", (req, res, next) => {
-  res.status(200).json({ success: true, message: "welcome to homepage" });
-});
+// //root routes tesing purpose
+// app.use("/", (req, res, next) => {
+//   res.status(200).json({ success: true, message: "welcome to homepage" });
+// });
 
 //connecting Db and starting server
 connectDb()

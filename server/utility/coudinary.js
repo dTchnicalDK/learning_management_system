@@ -10,7 +10,7 @@ cloudinary.config({
 });
 
 // Upload an image
-export const uploadToMediaCloudinary = async (file) => {
+export const uploadMediaToCloudinary = async (file) => {
   try {
     const uploadResult = await cloudinary.uploader
       .upload(file, { resource_type: "auto", folder: "LMS/profilePhoto" })

@@ -68,25 +68,6 @@ export const authApi = createApi({
         method: "PUT",
         body: formData,
       }),
-      // async onQueryStarted(_, { queryFulfilled, dispatch }) {
-      //   try {
-      //     const result = await queryFulfilled;
-      //     dispatch(userLoggedIn({ user: result.data.user }));
-      //   } catch (error) {
-      //     console.log("loginUser error", error);
-      //   }
-      // },
-
-      //   async onQueryStarted(_, { queryFulfilled, dispatch }) {
-      //     try {
-      //       const updateUserResult = await queryFulfilled;
-
-      //       console.log("updateProfileAt rtkAuthApi", updateUserResult);
-      //       // dispatch(userLoggedIn({user: updateUserResult.data.user}))
-      //     } catch (error) {
-      //       console.log("updateUser rtkApi error", error);
-      //     }
-      //   },
     }),
   }),
 });

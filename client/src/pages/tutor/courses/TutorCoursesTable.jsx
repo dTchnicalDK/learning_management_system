@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import {
   Table,
   TableBody,
@@ -9,8 +9,10 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
-import { Edit } from "lucide-react";
+import { Edit, Loader } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
+import { useGetAllCoursesQuery } from "@/features/api/courseApi";
+import { toast } from "sonner";
 
 const courses = [
   {
@@ -31,6 +33,29 @@ const courses = [
 ];
 
 const TutorCoursesTable = () => {
+  const {
+    data: courseData,
+    isFetching,
+    error,
+    isError,
+    isSuccess,
+  } = useGetAllCoursesQuery();
+  // console.log("course data", data);
+
+  useEffect(() => {
+    if (isError) {
+      toast.error(error.data.message || "fetching error");
+    }
+  }, [isError, isSuccess, courseData]);
+
+  if (isFetching) {
+    return (
+      <div className="w-full h-full  flex-1 m-auto justify-center items-center">
+        <Loader className="size-20  animate-spin" />;
+      </div>
+    );
+  }
+
   return (
     <div className="w-full flex-1 flex-col items-center justify-center ">
       <h1 className="text-2xl font-bold text-center">
@@ -48,10 +73,10 @@ const TutorCoursesTable = () => {
           </TableRow>
         </TableHeader>
         <TableBody>
-          {courses &&
-            courses.map((course, index) => {
+          {courseData &&
+            courseData.course.map((course, index) => {
               return (
-                <TableRow key={index + 1}>
+                <TableRow key={course._id}>
                   <TableCell className="font-medium">{index + 1}</TableCell>
                   <TableCell>{course.courseTitle}</TableCell>
                   <TableCell>

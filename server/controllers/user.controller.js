@@ -4,7 +4,8 @@ import createToken from "../helper/createToken.js";
 import fs from "fs/promises";
 import {
   deleteMediaFromCloudinary,
-  uploadToMediaCloudinary,
+  uploadMediaToCloudinary,
+  // uploadToMediaCloudinary,
 } from "../utility/coudinary.js";
 
 ///////////////Register User//////////
@@ -166,61 +167,7 @@ export const getAllUsers = async (req, res) => {
   }
 };
 
-//////////////////edit Profile////////////////////////
-// export const editProfile = async (req, res) => {
-//   try {
-//     const { userId } = req;
-//     const { userName } = req.body;
-//     const profilePhoto = req.file;
-
-//     //assuring the user exits
-//     const user = await User.findById({ _id: userId }).select("-password");
-//     if (!user) {
-//       if (profilePhoto && profilePhoto.path) {
-//         await fs
-//           .unlink(profilePhoto.path)
-//           .catch((err) => console.error("Error deleting temp file:", err));
-//       }
-//       return res.status(404).json({ message: "id does not exits!" });
-//     }
-
-//     //uploading to cloudinary
-//     let fileUrl;
-//     if (profilePhoto) {
-//       fileUrl = await uploadToMediaCloudinary(profilePhoto.path);
-//       console.log("fileUrl", fileUrl);
-//       const publicId = user.photoURL?.split("/").pop().split(".")[0]; // extract public id
-//       console.log("publicId", publicId);
-//       if (publicId) {
-//         await deleteMediaFromCloudinary(publicId);
-//       }
-//       // Delete the temporary file uploaded by multer
-//       if (profilePhoto && profilePhoto.path) {
-//         await fs
-//           .unlink(profilePhoto.path)
-//           .catch((err) => console.error("Error deleting temp file:", err));
-//       }
-//     }
-
-//     //actually updating user
-//     const updateUser = await User.findByIdAndUpdate(
-//       userId,
-//       {
-//         userName,
-//         photoURL: fileUrl,
-//       },
-//       { new: true }
-//     ).select("-password");
-//     return res
-//       .status(201)
-//       .json({ message: "profile updated successfully", user: updateUser });
-//   } catch (error) {
-//     res.status(500).json({ message: error.message || "internal server error" });
-//   }
-// };
-
 //////////////edit profile///////////
-
 export const editProfile = async (req, res) => {
   const { userId } = req;
   const { userName } = req.body;
@@ -262,7 +209,7 @@ export const editProfile = async (req, res) => {
     // If a new file was uploaded
     if (file) {
       // Upload the new file first
-      const uploadResult = await uploadToMediaCloudinary(file.path, {
+      const uploadResult = await uploadMediaToCloudinary(file.path, {
         folder: "LMS/profilePhoto", // Upload to the correct folder
       });
       updateData.photoURL = uploadResult.secure_url;
