@@ -13,6 +13,7 @@ import { Edit, Loader } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { useGetAllCoursesQuery } from "@/features/api/courseApi";
 import { toast } from "sonner";
+import { useNavigate } from "react-router";
 
 const courses = [
   {
@@ -40,6 +41,7 @@ const TutorCoursesTable = () => {
     isError,
     isSuccess,
   } = useGetAllCoursesQuery();
+  const navigate = useNavigate();
   // console.log("course data", data);
 
   useEffect(() => {
@@ -57,10 +59,20 @@ const TutorCoursesTable = () => {
   }
 
   return (
-    <div className="w-full flex-1 flex-col items-center justify-center ">
+    <div className="w-full flex flex-col space-y-5">
       <h1 className="text-2xl font-bold text-center">
         Your have created following courses
       </h1>
+
+      <Button
+        onClick={() => {
+          navigate("/tutor/course/create");
+        }}
+        className="cursor-pointer max-w-xs"
+      >
+        + Add course
+      </Button>
+
       <Table>
         <TableCaption>A list of your launched / draft courses.</TableCaption>
         <TableHeader>
@@ -80,7 +92,9 @@ const TutorCoursesTable = () => {
                   <TableCell className="font-medium">{index + 1}</TableCell>
                   <TableCell>{course.courseTitle}</TableCell>
                   <TableCell>
-                    <Badge variant="default">{course.courseStatus}</Badge>
+                    <Badge variant="default" className="text-sky-50">
+                      {course.courseStatus ? <>Published</> : <>Draft</>}
+                    </Badge>
                   </TableCell>
                   <TableCell className="text-right">
                     ₹ {course.coursePrice}

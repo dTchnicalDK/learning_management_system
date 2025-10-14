@@ -8,6 +8,7 @@ import ProfilePage from "./pages/student/ProfilePage";
 import TutorLayout from "./pages/tutor/TutorLayout";
 import TutorDashboard from "./pages/tutor/courses/TutorDashboard";
 import TutorCoursesTable from "./pages/tutor/courses/TutorCoursesTable";
+import CreateCourse from "./pages/tutor/courses/CreateCourse";
 
 function App() {
   return (
@@ -23,6 +24,7 @@ function App() {
         <Route path="/tutor" element={<TutorLayout />}>
           <Route index element={<TutorDashboard />} />
           <Route path="courses-table" element={<TutorCoursesTable />} />
+          <Route path="course/create" element={<CreateCourse />} />
         </Route>
 
         <Route path="/" element={<RootLayout />}>

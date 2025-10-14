@@ -25,9 +25,9 @@ export const getAllCourses = async (req, res) => {
 /////////////create course///////////////////////
 export const createCourse = async (req, res) => {
   const creator = req.userId;
-  console.log("creator", creator);
+  // console.log("creator", creator);
   const { courseTitle, courseSubtitle, category } = req.body;
-  console.log("req datas", courseTitle, category);
+  // console.log("req datas", courseTitle, category);
 
   if (!courseTitle || !category) {
     return res.status(400).json({
@@ -53,7 +53,7 @@ export const createCourse = async (req, res) => {
       category,
       creator,
     });
-    console.log("createCourse", createdCourse, createdCourse._id);
+    // console.log("createCourse", createdCourse, createdCourse._id);
     return res
       .status(201)
       .json({ message: "course created successfully", course: createdCourse });
