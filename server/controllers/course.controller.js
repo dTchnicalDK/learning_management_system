@@ -3,6 +3,7 @@ import {
   deleteMediaFromCloudinary,
   uploadMediaToCloudinary,
 } from "../utility/coudinary.js";
+import fs from "fs/promises";
 
 /////////////get courses ////////////////
 export const getAllCourses = async (req, res) => {
@@ -75,7 +76,9 @@ export const editCourse = async (req, res) => {
     category,
     courseLevel,
     coursePrice,
-  } = req.formData;
+  } = req.body;
+  const userId = req.userId;
+  const creator = userId;
   const courseThumbnail = req.file;
 
   if (!courseId || !courseTitle || !category || !creator) {
@@ -95,9 +98,21 @@ export const editCourse = async (req, res) => {
         success: false,
       });
     }
-    if (courseThumbnail) {
-      const cloudinaryUrl = await uploadMediaToCloudinary(courseThumbnail.path);
-      //delete old courseThumbnail from cloudinary
+
+    //upload to cloudinary
+    const cloudinaryUrl = await uploadMediaToCloudinary(courseThumbnail.path, {
+      folder: "LMS/coursesThumbnails",
+    });
+
+    // Delete the local temp file after the Cloudinary upload is complete
+    await fs
+      .unlink(courseThumbnail.path)
+      .catch((err) =>
+        console.error("Error deleting temp courseThumbnail:", err)
+      );
+
+    //delete old courseThumbnail from cloudinary
+    if (courseOldValues.courseThumbnail) {
       const publicId = courseOldValues?.courseThumbnail
         ?.split("/upload/")
         .pop()
@@ -107,9 +122,8 @@ export const editCourse = async (req, res) => {
         .split(".")[0];
       console.log("publicId", publicId);
       const isOldPhotoDeleted = await deleteMediaFromCloudinary(publicId);
-      console.log("isOldPhotoDeleted", isOldPhotoDeleted);
     }
-    const updatedCourseValues = await findByIdAndUpdate(
+    const updatedCourseValues = await Course.findByIdAndUpdate(
       { _id: courseId },
       {
         courseTitle: courseTitle.trim(),
@@ -118,14 +132,14 @@ export const editCourse = async (req, res) => {
         coursePrice,
         description,
         courseLevel,
-        courseThumbnail: cloudinaryUrl,
+        courseThumbnail: cloudinaryUrl.secure_url,
       },
       { new: true }
     );
-    console.log("updatedCourseValues", updatedCourseValues);
-    return res
-      .status(200)
-      .json({ message: `course ${courseTitle} updated successfully` });
+
+    return res.status(200).json({
+      message: `course:-- ${courseTitle}-- updated into --${updatedCourseValues.courseTitle}`,
+    });
   } catch (error) {
     console.log("course edit error", error);
   }
