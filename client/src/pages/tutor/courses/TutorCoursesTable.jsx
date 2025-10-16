@@ -101,6 +101,9 @@ const TutorCoursesTable = () => {
                   </TableCell>
                   <TableCell className="text-right">
                     <Button
+                      onClick={() =>
+                        navigate(`/tutor/course/${course._id}/edit`)
+                      }
                       variant="ghost"
                       className="cursor-pointer hover:text-sky-500 hover:shadow-xl"
                     >

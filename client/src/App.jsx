@@ -9,6 +9,8 @@ import TutorLayout from "./pages/tutor/TutorLayout";
 import TutorDashboard from "./pages/tutor/courses/TutorDashboard";
 import TutorCoursesTable from "./pages/tutor/courses/TutorCoursesTable";
 import CreateCourse from "./pages/tutor/courses/CreateCourse";
+import EditCourse from "./pages/tutor/courses/EditCourse";
+import ReactQuillEditor from "./components/ReactQuillEditor";
 
 function App() {
   return (
@@ -25,6 +27,7 @@ function App() {
           <Route index element={<TutorDashboard />} />
           <Route path="courses-table" element={<TutorCoursesTable />} />
           <Route path="course/create" element={<CreateCourse />} />
+          <Route path="course/:id/edit" element={<ReactQuillEditor />} />
         </Route>
 
         <Route path="/" element={<RootLayout />}>

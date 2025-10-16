@@ -31,7 +31,6 @@ const NavBar = () => {
     useLogOutUserMutation();
   const navigate = useNavigate();
 
-  console.log("user", user);
   const handleLogout = async () => {
     try {
       await logOutUser();

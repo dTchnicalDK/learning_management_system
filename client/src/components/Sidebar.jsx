@@ -1,4 +1,8 @@
-import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
+import {
+  SidebarHeader,
+  SidebarProvider,
+  SidebarTrigger,
+} from "@/components/ui/sidebar";
 // import { AppSidebar } from "@/components/app-sidebar";
 
 import {
@@ -21,7 +25,8 @@ import {
   SidebarMenuItem,
 } from "@/components/ui/sidebar";
 
-import { Link } from "react-router";
+import { Link, Outlet } from "react-router";
+import NavBar from "./NavBar";
 
 // Menu items.
 const items = [
@@ -55,6 +60,11 @@ const items = [
 export function AppSidebar() {
   return (
     <Sidebar>
+      <SidebarHeader>
+        <div className="mt-12">
+          <NavBar className="" />
+        </div>
+      </SidebarHeader>
       <SidebarContent>
         <SidebarGroup>
           <SidebarGroupLabel>Tutor Dashboard</SidebarGroupLabel>
@@ -82,10 +92,9 @@ export default function SidebarComp({ children }) {
   return (
     <SidebarProvider>
       <AppSidebar />
-      <main>
+      <main className="flex-1">
         <SidebarTrigger />
-
-        {children}
+        <div className="p-5">{children}</div>
       </main>
     </SidebarProvider>
   );
