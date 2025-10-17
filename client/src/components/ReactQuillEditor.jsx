@@ -20,26 +20,44 @@ import {
   SelectTrigger,
   SelectValue,
 } from "./ui/select";
-import { useUpdateCourseMutation } from "@/features/api/courseApi";
+import {
+  useGetAllCoursesQuery,
+  useGetCourseByIdQuery,
+  useUpdateCourseMutation,
+} from "@/features/api/courseApi";
 import { useParams } from "react-router";
 import DOMPurify from "dompurify";
 import { Loader2 } from "lucide-react";
 import { toast } from "sonner";
 
 const ReactQuillEditor = () => {
-  const [courseDetails, setCourseDetails] = useState("");
-  const [courseThumbnail, setCourseThumbnail] = useState(null);
-  const [updateCourse, { data, isLoading, error, isSuccess }] =
-    useUpdateCourseMutation();
-  const params = useParams();
   const [inputData, setInputData] = useState({
     courseTitle: "",
     courseSubtitle: "",
     category: "",
     courseLevel: "",
     coursePrice: 0,
-    courseThumbnail,
+    courseThumbnail: "",
+    description: "",
   });
+  const [courseDetails, setCourseDetails] = useState(inputData?.description);
+  const [courseThumbnail, setCourseThumbnail] = useState(
+    inputData?.courseThumbnail
+  );
+  const [updateCourse, { data, isLoading, error, isSuccess }] =
+    useUpdateCourseMutation();
+  const params = useParams();
+  const {
+    data: courseInitialData,
+    isLoading: isCourseDataLoading,
+    error: courseError,
+  } = useGetCourseByIdQuery(params.id);
+
+  //fetching old data on loadin component
+  useEffect(() => {
+    console.log("initialData", courseInitialData);
+    setInputData(courseInitialData?.course);
+  }, [courseInitialData]);
 
   // Quill editor modules configuration
   const modules = {
@@ -73,6 +91,9 @@ const ReactQuillEditor = () => {
     const { name, value } = e.target;
     setInputData({ ...inputData, [name]: value });
   };
+  const handleReactQuilEditorData = (e) => {
+    console.log("quill data", e.target);
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -87,7 +108,7 @@ const ReactQuillEditor = () => {
       formData.append("courseThumbnail", courseThumbnail);
       formData.append("courseTitle", inputData.courseTitle);
       formData.append("courseSubtitle", inputData.courseSubtitle);
-      formData.append("courseLevel", inputData.category);
+      formData.append("courseLevel", inputData.courseLevel);
       formData.append("coursePrice", inputData.coursePrice);
       formData.append("category", inputData.category);
       formData.append("courseId", params.id);
@@ -105,6 +126,10 @@ const ReactQuillEditor = () => {
       toast.error(error.data?.message || "error while updating");
     }
   }, [isSuccess, error]);
+
+  if (isCourseDataLoading) {
+    return <h1>Loading....</h1>;
+  }
 
   return (
     <div className="container mx-auto p-6">
@@ -132,7 +157,7 @@ const ReactQuillEditor = () => {
                 id="title"
                 type="text"
                 name="courseTitle"
-                value={inputData.courseTitle}
+                value={inputData?.courseTitle}
                 // value={title}
                 // onChange={(e) => setTitle(e.target.value)}
                 onChange={handleChange}
@@ -154,7 +179,7 @@ const ReactQuillEditor = () => {
                 id="subtitle"
                 type="text"
                 name="courseSubtitle"
-                value={inputData.courseSubtitle}
+                value={inputData?.courseSubtitle}
                 // value={subTitle}
                 // onChange={(e) => setSubTitle(e.target.value)}
                 onChange={handleChange}
@@ -174,9 +199,9 @@ const ReactQuillEditor = () => {
               <div className="min-h-[200px] border border-gray-300 rounded-md overflow-hidden dark:border-gray-600">
                 <ReactQuill
                   theme="snow"
-                  value={courseDetails}
-                  onChange={setCourseDetails}
-                  //   onChange={handleChange}
+                  value={inputData?.description}
+                  // onChange={setInputData}
+                  onChange={handleReactQuilEditorData}
                   modules={modules}
                   formats={formats}
                   className="h-full"
@@ -213,6 +238,7 @@ const ReactQuillEditor = () => {
                   course level
                 </Label>
                 <Select
+                  value={inputData?.courseLevel}
                   onValueChange={(value) =>
                     setInputData({
                       ...inputData,
@@ -243,7 +269,7 @@ const ReactQuillEditor = () => {
                   id="coursePrice"
                   type="number"
                   name="coursePrice"
-                  value={inputData.coursePrice}
+                  value={inputData?.coursePrice}
                   // value={subTitle}
                   // onChange={(e) => setSubTitle(e.target.value)}
                   onChange={handleChange}
@@ -277,6 +303,8 @@ const ReactQuillEditor = () => {
                   src={URL.createObjectURL(courseThumbnail)}
                   alt="course Thumbnail"
                 />
+              ) : inputData?.courseThumbnail ? (
+                <img src={inputData.courseThumbnail} alt="course Thumbnail" />
               ) : (
                 "no file selected!"
               )}

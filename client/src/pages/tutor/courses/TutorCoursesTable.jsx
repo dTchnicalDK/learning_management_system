@@ -52,7 +52,7 @@ const TutorCoursesTable = () => {
 
   if (isFetching) {
     return (
-      <div className="w-full h-full  flex-1 m-auto justify-center items-center">
+      <div className="w-3/4 h-screen flex m-auto justify-center items-center">
         <Loader className="size-20  animate-spin" />;
       </div>
     );

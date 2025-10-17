@@ -23,6 +23,30 @@ export const getAllCourses = async (req, res) => {
   }
 };
 
+/////////////get course by id ////////////////
+export const getCourseById = async (req, res) => {
+  const { courseId } = req.params;
+  try {
+    if (!courseId) {
+      return res
+        .status(400)
+        .json({ message: "id is must to get course", success: false });
+    }
+    const course = await Course.findById(courseId);
+    if (course.length <= 0) {
+      return res
+        .status(400)
+        .json({ message: "no course created yet", success: true, course: [] });
+    }
+    return res
+      .status(200)
+      .json({ message: "courses fetched!", success: true, course });
+  } catch (error) {
+    console.log("gettin course error", error);
+    return res.status(500).json({ message: "course creation server error" });
+  }
+};
+
 /////////////create course///////////////////////
 export const createCourse = async (req, res) => {
   const creator = req.userId;

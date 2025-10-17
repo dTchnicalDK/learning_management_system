@@ -5,6 +5,7 @@ import {
   createCourse,
   editCourse,
   getAllCourses,
+  getCourseById,
 } from "../controllers/course.controller.js";
 const tutorRouter = express.Router();
 
@@ -16,5 +17,6 @@ tutorRouter.post(
   editCourse
 );
 tutorRouter.get("/course", getAllCourses);
+tutorRouter.get("/course/:courseId", isUserAuthenticated, getCourseById);
 
 export default tutorRouter;

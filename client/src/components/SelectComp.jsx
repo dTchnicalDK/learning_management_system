@@ -15,6 +15,7 @@ const SelectComp = ({ settingCategory, inputData }) => {
     <div>
       <div className="flex gap-4 justify-between">
         <Select
+          value={inputData?.category}
           onValueChange={(value) =>
             settingCategory({ ...inputData, category: value })
           }
