@@ -9,10 +9,10 @@ import {
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import ReactQuill from "react-quill-new";
 import "react-quill-new/dist/quill.snow.css";
-import SelectComp from "./SelectComp";
+import SelectComp from "./SelectCategoryComp";
 import {
   Select,
   SelectContent,
@@ -21,7 +21,6 @@ import {
   SelectValue,
 } from "./ui/select";
 import {
-  useGetAllCoursesQuery,
   useGetCourseByIdQuery,
   useUpdateCourseMutation,
 } from "@/features/api/courseApi";
@@ -37,29 +36,45 @@ const ReactQuillEditor = () => {
     category: "",
     courseLevel: "",
     coursePrice: 0,
-    courseThumbnail: "",
+    courseThumbnail: null,
     description: "",
   });
-  const [courseDetails, setCourseDetails] = useState(inputData?.description);
-  const [courseThumbnail, setCourseThumbnail] = useState(
-    inputData?.courseThumbnail
-  );
+
+  const initialLoadRef = useRef(false);
+  const params = useParams();
+
   const [updateCourse, { data, isLoading, error, isSuccess }] =
     useUpdateCourseMutation();
-  const params = useParams();
+
   const {
     data: courseInitialData,
     isLoading: isCourseDataLoading,
     error: courseError,
   } = useGetCourseByIdQuery(params.id);
 
-  //fetching old data on loadin component
+  // Fetch initial course data
   useEffect(() => {
-    console.log("initialData", courseInitialData);
-    setInputData(courseInitialData?.course);
+    if (courseInitialData?.course && !initialLoadRef.current) {
+      const courseData = courseInitialData.course;
+
+      setInputData({
+        courseTitle: courseData.courseTitle || "",
+        courseSubtitle: courseData.courseSubtitle || "",
+        category: courseData.category || "",
+        courseLevel: courseData.courseLevel || "",
+        coursePrice: courseData.coursePrice || 0,
+        courseThumbnail: courseData.courseThumbnail || null,
+        description: courseData.description || "",
+      });
+
+      initialLoadRef.current = true;
+      // // Set a small timeout to ensure ReactQuill is ready
+      // setTimeout(() => {
+      //   setIsEditorReady(true);
+      // }, 100);
+    }
   }, [courseInitialData]);
 
-  // Quill editor modules configuration
   const modules = {
     toolbar: [
       [{ header: [1, 2, 3, false] }],
@@ -79,7 +94,6 @@ const ReactQuillEditor = () => {
     "underline",
     "strike",
     "list",
-    // "bullet",
     "link",
     "image",
     "blockquote",
@@ -88,51 +102,118 @@ const ReactQuillEditor = () => {
   ];
 
   const handleChange = (e) => {
-    const { name, value } = e.target;
-    setInputData({ ...inputData, [name]: value });
+    const { name, value, type } = e.target;
+    setInputData((prev) => ({
+      ...prev,
+      [name]: type === "number" ? Number(value) : value,
+    }));
   };
-  const handleReactQuilEditorData = (e) => {
-    console.log("quill data", e.target);
+
+  const handleDescriptionChange = (value) => {
+    setInputData((prev) => ({ ...prev, description: value }));
+  };
+
+  const handleThumbnailChange = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      setInputData((prev) => ({
+        ...prev,
+        courseThumbnail: file,
+      }));
+    }
+  };
+
+  const handleCancel = () => {
+    if (courseInitialData?.course) {
+      setInputData(courseInitialData.course);
+      initialLoadRef.current = true;
+    }
+  };
+
+  // Category handler with empty value protection
+  const handleCategoryChange = (value) => {
+    if (value === "") return;
+    setInputData((prev) => ({
+      ...prev,
+      category: value,
+    }));
+  };
+
+  // Course Level handler with empty value protection
+  const handleCourseLevelChange = (value) => {
+    if (value === "") return;
+    setInputData((prev) => ({
+      ...prev,
+      courseLevel: value,
+    }));
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
 
+    if (!inputData.courseTitle?.trim()) {
+      toast.error("Course title is required");
+      return;
+    }
+
     try {
       const formData = new FormData();
-
-      // Sanitize the HTML content before sending
-      const sanitizedDescription = DOMPurify.sanitize(courseDetails);
+      const sanitizedDescription = DOMPurify.sanitize(
+        inputData.description || ""
+      );
 
       formData.append("description", sanitizedDescription);
-      formData.append("courseThumbnail", courseThumbnail);
       formData.append("courseTitle", inputData.courseTitle);
-      formData.append("courseSubtitle", inputData.courseSubtitle);
-      formData.append("courseLevel", inputData.courseLevel);
-      formData.append("coursePrice", inputData.coursePrice);
-      formData.append("category", inputData.category);
+      formData.append("courseSubtitle", inputData.courseSubtitle || "");
+      formData.append("courseLevel", inputData?.courseLevel || "");
+      formData.append("coursePrice", inputData.coursePrice?.toString() || "0");
+      formData.append("category", inputData?.category);
       formData.append("courseId", params.id);
+
+      if (inputData.courseThumbnail instanceof File) {
+        formData.append("courseThumbnail", inputData.courseThumbnail);
+      }
 
       await updateCourse(formData);
     } catch (error) {
-      console.log("error while updating", error);
+      console.error("Error while updating:", error);
+      toast.error("An unexpected error occurred");
     }
   };
+
+  // Toast messages
   useEffect(() => {
     if (isSuccess) {
-      toast.success(data.message || "updated!");
+      toast.success(data?.message || "Course updated successfully!");
     }
+  }, [isSuccess, data]);
+
+  useEffect(() => {
     if (error) {
-      toast.error(error.data?.message || "error while updating");
+      toast.error(error?.data?.message || "Error while updating course");
     }
-  }, [isSuccess, error]);
+  }, [error]);
 
   if (isCourseDataLoading) {
-    return <h1>Loading....</h1>;
+    return (
+      <div className="flex justify-center items-center min-h-64">
+        <Loader2 className="animate-spin h-8 w-8" />
+        <span className="ml-2">Loading course data...</span>
+      </div>
+    );
+  }
+
+  if (courseError) {
+    return (
+      <div className="text-center text-red-500 p-4">
+        Error loading course data. Please try again.
+      </div>
+    );
   }
 
   return (
     <div className="container mx-auto p-6">
+      {console.log("input data", inputData)}
       <Card className="w-full max-w-4xl mx-auto">
         <CardHeader className="pb-4">
           <CardTitle className="text-2xl font-bold text-gray-900 dark:text-white">
@@ -157,9 +238,7 @@ const ReactQuillEditor = () => {
                 id="title"
                 type="text"
                 name="courseTitle"
-                value={inputData?.courseTitle}
-                // value={title}
-                // onChange={(e) => setTitle(e.target.value)}
+                value={inputData?.courseTitle || ""}
                 onChange={handleChange}
                 placeholder="Enter course title"
                 className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white"
@@ -179,9 +258,7 @@ const ReactQuillEditor = () => {
                 id="subtitle"
                 type="text"
                 name="courseSubtitle"
-                value={inputData?.courseSubtitle}
-                // value={subTitle}
-                // onChange={(e) => setSubTitle(e.target.value)}
+                value={inputData?.courseSubtitle || ""}
                 onChange={handleChange}
                 placeholder="Enter course sub-title"
                 className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white"
@@ -200,8 +277,7 @@ const ReactQuillEditor = () => {
                 <ReactQuill
                   theme="snow"
                   value={inputData?.description}
-                  // onChange={setInputData}
-                  onChange={handleReactQuilEditorData}
+                  onChange={handleDescriptionChange}
                   modules={modules}
                   formats={formats}
                   className="h-full"
@@ -209,55 +285,50 @@ const ReactQuillEditor = () => {
                     minHeight: "200px",
                     border: "none",
                   }}
+                  key={inputData.description} // Force re-render when description changes
                 />
               </div>
             </div>
 
-            {/* ---------------------- */}
             <div className="flex justify-between items-center gap-2">
-              {/* -------course  category---------- */}
+              {/* Course Category */}
               <div className="space-y-2">
                 <Label
                   htmlFor="category"
                   className="text-sm font-medium text-gray-700 dark:text-gray-300"
                 >
-                  category
+                  Category
                 </Label>
                 <SelectComp
-                  settingCategory={setInputData}
+                  onCategoryChange={handleCategoryChange}
                   inputData={inputData}
                 />
               </div>
 
-              {/* //course level-------- */}
+              {/* Course Level */}
               <div className="space-y-2">
                 <Label
-                  htmlFor="category"
+                  htmlFor="courseLevel"
                   className="text-sm font-medium text-gray-700 dark:text-gray-300"
                 >
-                  course level
+                  Course Level
                 </Label>
                 <Select
-                  value={inputData?.courseLevel}
-                  onValueChange={(value) =>
-                    setInputData({
-                      ...inputData,
-                      courseLevel: value,
-                    })
-                  }
+                  value={inputData.courseLevel || ""}
+                  onValueChange={handleCourseLevelChange}
                 >
                   <SelectTrigger className="w-[180px]">
                     <SelectValue placeholder="Select level" />
                   </SelectTrigger>
                   <SelectContent>
                     <SelectItem value="basic">Basic</SelectItem>
-                    <SelectItem value="intermediate">Inermediate</SelectItem>
+                    <SelectItem value="intermediate">Intermediate</SelectItem>
                     <SelectItem value="advance">Advance</SelectItem>
                   </SelectContent>
                 </Select>
               </div>
 
-              {/* Price in INR */}
+              {/* Price */}
               <div className="space-y-2">
                 <Label
                   htmlFor="coursePrice"
@@ -269,17 +340,16 @@ const ReactQuillEditor = () => {
                   id="coursePrice"
                   type="number"
                   name="coursePrice"
-                  value={inputData?.coursePrice}
-                  // value={subTitle}
-                  // onChange={(e) => setSubTitle(e.target.value)}
+                  value={inputData?.coursePrice || 0}
                   onChange={handleChange}
-                  placeholder="course price"
+                  placeholder="Course price"
                   className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white"
+                  min="0"
                 />
               </div>
             </div>
 
-            {/* Choose Course Thumbnail */}
+            {/* Course Thumbnail */}
             <div className="space-y-2">
               <Label
                 htmlFor="courseThumbnail"
@@ -287,26 +357,37 @@ const ReactQuillEditor = () => {
               >
                 Choose Course Thumbnail
               </Label>
-              <input
+              <Input
                 id="courseThumbnail"
                 type="file"
                 accept="image/*"
-                name="courseThumbnail"
-                onChange={(e) => setCourseThumbnail(e.target.files[0])}
+                onChange={handleThumbnailChange}
                 className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white"
+                aria-describedby="thumbnail-help"
               />
+              <div id="thumbnail-help" className="text-sm text-gray-500 mt-1">
+                Recommended size: 1280x720 pixels
+              </div>
             </div>
-            {/* --------course Thumbnail preview----- */}
-            <div>
-              {courseThumbnail ? (
+
+            {/* Thumbnail Preview */}
+            <div className="mt-2">
+              {inputData.courseThumbnail instanceof File ? (
                 <img
-                  src={URL.createObjectURL(courseThumbnail)}
-                  alt="course Thumbnail"
+                  src={URL.createObjectURL(inputData.courseThumbnail)}
+                  alt="Course thumbnail preview"
+                  className="max-w-xs max-h-32 object-cover rounded"
                 />
-              ) : inputData?.courseThumbnail ? (
-                <img src={inputData.courseThumbnail} alt="course Thumbnail" />
+              ) : inputData.courseThumbnail ? (
+                <img
+                  src={inputData.courseThumbnail}
+                  alt="Course thumbnail"
+                  className="max-w-xs max-h-32 object-cover rounded"
+                />
               ) : (
-                "no file selected!"
+                <div className="text-gray-500 italic">
+                  No thumbnail selected
+                </div>
               )}
             </div>
 
@@ -319,7 +400,10 @@ const ReactQuillEditor = () => {
                   className="flex-1 bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 px-4 rounded-md transition-colors duration-200"
                 >
                   {isLoading ? (
-                    <Loader2 className="mr-2 animate-spin">Updating...</Loader2>
+                    <>
+                      <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                      Updating...
+                    </>
                   ) : (
                     "Update Course"
                   )}
@@ -327,7 +411,8 @@ const ReactQuillEditor = () => {
                 <Button
                   type="button"
                   variant="outline"
-                  className="flex-1 border border-gray-300 text-gray-700 hover:bg-gray-50 font-medium py-2 px-4 rounded-md transition-colors duration-200 dark:border-gray-600 dark:text-gray-300 dark:hover:bg-gray-800"
+                  onClick={handleCancel}
+                  className="flex-1"
                 >
                   Cancel
                 </Button>

@@ -66,7 +66,7 @@ const TutorCoursesTable = () => {
 
       <Button
         onClick={() => {
-          navigate("/tutor/course/create");
+          navigate("/tutor/course/create-course");
         }}
         className="cursor-pointer max-w-xs"
       >

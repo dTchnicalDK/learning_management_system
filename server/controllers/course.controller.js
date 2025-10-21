@@ -93,14 +93,15 @@ export const createCourse = async (req, res) => {
 /////////////////edit course///////////
 export const editCourse = async (req, res) => {
   const {
-    courseId,
     courseTitle,
     courseSubtitle,
+    courseId,
     description,
     category,
     courseLevel,
     coursePrice,
   } = req.body;
+
   const userId = req.userId;
   const creator = userId;
   const courseThumbnail = req.file;
