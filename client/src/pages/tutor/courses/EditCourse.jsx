@@ -106,7 +106,10 @@ const EditCourse = () => {
     //submitting data/ calling api
     try {
       await updateCourse(formData);
-    } catch (error) {}
+    } catch (error) {
+      console.log("data submittin error", error);
+      toast.error(error.data?.message || "updatation error");
+    }
   };
 
   // Toast messages
@@ -137,6 +140,7 @@ const EditCourse = () => {
               type="text"
               value={courseTitle}
               onChange={(e) => setCourseTitle(e.target.value)}
+              placeholder="ex. competitive History"
             />
           </div>
           <div className="space-y-2">
@@ -145,6 +149,7 @@ const EditCourse = () => {
               type="text"
               value={courseSubTitle}
               onChange={(e) => setCourseSubTitle(e.target.value)}
+              placeholder="ex. revolt of 1857"
             />
           </div>
 
@@ -155,6 +160,7 @@ const EditCourse = () => {
               theme="snow"
               value={description}
               onChange={setDescription}
+              placeholder="Write something to describe course..."
             />
           </div>
 
@@ -193,7 +199,7 @@ const EditCourse = () => {
                 name="coursePrice"
                 value={coursePrice}
                 onChange={(e) => setCoursePrice(e.target.value)}
-                placeholder="Course price"
+                placeholder="price ex. 200"
                 className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white"
                 min="0"
               />

@@ -129,13 +129,6 @@ export const editCourse = async (req, res) => {
       folder: "LMS/coursesThumbnails",
     });
 
-    // Delete the local temp file after the Cloudinary upload is complete
-    await fs
-      .unlink(courseThumbnail.path)
-      .catch((err) =>
-        console.error("Error deleting temp courseThumbnail:", err)
-      );
-
     //delete old courseThumbnail from cloudinary
     if (courseOldValues.courseThumbnail) {
       const publicId = courseOldValues?.courseThumbnail
@@ -148,6 +141,16 @@ export const editCourse = async (req, res) => {
       console.log("publicId", publicId);
       const isOldPhotoDeleted = await deleteMediaFromCloudinary(publicId);
     }
+
+    // Delete the local temp file after the Cloudinary upload is complete
+
+    // try {
+    //   await fs.unlink(courseThumbnail.path);
+    //   console.log("temp file deleted");
+    // } catch (error) {
+    //   return console.error("Error deleting temp courseThumbnail:", error);
+    // }
+
     const updatedCourseValues = await Course.findByIdAndUpdate(
       { _id: courseId },
       {
@@ -167,5 +170,24 @@ export const editCourse = async (req, res) => {
     });
   } catch (error) {
     console.log("course edit error", error);
+  } finally {
+    const cleanupTempFile = async (filePath) => {
+      if (!filePath) return;
+
+      try {
+        await fs.access(filePath); // Check if file exists
+        await fs.unlink(filePath);
+        // console.log("Temp file deleted:", filePath);
+      } catch (error) {
+        if (error.code === "ENOENT") {
+          console.log("Temp file already deleted:", filePath);
+        } else {
+          console.error("Error deleting temp file:", error);
+        }
+      }
+    };
+
+    // calling file cleanup function
+    await cleanupTempFile(courseThumbnail.path);
   }
 };

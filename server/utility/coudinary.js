@@ -10,10 +10,13 @@ cloudinary.config({
 });
 
 // Upload an image
-export const uploadMediaToCloudinary = async (file) => {
+export const uploadMediaToCloudinary = async (
+  file,
+  option = { folder: "LMS/profilePhoto" }
+) => {
   try {
     const uploadResult = await cloudinary.uploader
-      .upload(file, { resource_type: "auto", folder: "LMS/profilePhoto" })
+      .upload(file, { resource_type: "auto", ...option })
       .catch((error) => {
         console.log(error);
       });
@@ -33,7 +36,7 @@ export const deleteMediaFromCloudinary = async (publicId) => {
       invalidate: true,
       resource_type: "image",
     });
-    console.log("cloudinary resp", isDeleteSuccessfull);
+    // console.log("cloudinary resp", isDeleteSuccessfull);
     if (isDeleteSuccessfull.result === "ok") {
       console.log("deleted");
       return isDeleteSuccessfull;
