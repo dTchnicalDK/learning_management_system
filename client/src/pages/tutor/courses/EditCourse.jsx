@@ -22,10 +22,11 @@ import {
 } from "@/features/api/courseApi.js";
 import { Loader2 } from "lucide-react";
 import { toast } from "sonner";
-import { Await, useParams } from "react-router";
+import { Await, useNavigate, useParams } from "react-router";
 
 const EditCourse = () => {
   const params = useParams();
+  const navigate = useNavigate();
   //formdata variables
   const [courseTitle, setCourseTitle] = useState("");
   const [courseSubTitle, setCourseSubTitle] = useState("");
@@ -110,6 +111,14 @@ const EditCourse = () => {
       console.log("data submittin error", error);
       toast.error(error.data?.message || "updatation error");
     }
+  };
+  const handleCanel = () => {
+    const acknowledgement = window.confirm(
+      "Do you really want to cancel edit ??"
+    );
+    if (acknowledgement) {
+      navigate("/tutor/courses-table");
+    } else return;
   };
 
   // Toast messages
@@ -268,7 +277,7 @@ const EditCourse = () => {
             <Button
               type="button"
               variant="outline"
-              // onClick={handleCancel}
+              onClick={handleCanel}
               className="flex-1"
             >
               Cancel
