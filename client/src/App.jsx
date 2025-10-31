@@ -11,7 +11,9 @@ import TutorCoursesTable from "./pages/tutor/courses/TutorCoursesTable";
 import CreateCourse from "./pages/tutor/courses/CreateCourse";
 import EditCourse from "./pages/tutor/courses/EditCourse";
 import ReactQuillEditor from "./components/ReactQuillEditor";
-import CreateLecture from "./pages/tutor/courses/CreateLecture";
+import CreateLecture from "./pages/tutor/lecture/CreateLecture";
+import LecturesTable from "./pages/tutor/lecture/LecturesTable";
+import EditLecture from "./pages/tutor/lecture/EditLecture";
 
 function App() {
   return (
@@ -28,9 +30,17 @@ function App() {
           <Route index element={<TutorDashboard />} />
           <Route path="courses-table" element={<TutorCoursesTable />} />
           <Route path="course/create-course" element={<CreateCourse />} />
-          {/* <Route path="course/:id/edit" element={<ReactQuillEditor />} /> */}
           <Route path="course/:id/edit" element={<EditCourse />} />
-          <Route path="course/:id/lecture" element={<CreateLecture />} />
+          {/* -----------lectures---------------------------- */}
+          <Route path="course/:courseId/lectures" element={<LecturesTable />} />
+          <Route
+            path="course/:courseId/lecture/create"
+            element={<CreateLecture />}
+          />
+          <Route
+            path="course/:courseId/lecture/:lectureId"
+            element={<EditLecture />}
+          />
         </Route>
 
         <Route path="/" element={<RootLayout />}>

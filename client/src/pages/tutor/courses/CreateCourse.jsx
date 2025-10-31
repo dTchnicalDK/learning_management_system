@@ -85,7 +85,7 @@ const CreateCourse = () => {
                 {isLoading ? (
                   <Loader2 className="mr-2 animate-spin" />
                 ) : (
-                  <>Create lecture</>
+                  <>Create Course</>
                 )}
               </Button>
             </div>

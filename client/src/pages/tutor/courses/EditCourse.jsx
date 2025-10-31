@@ -107,9 +107,10 @@ const EditCourse = () => {
     //submitting data/ calling api
     try {
       await updateCourse(formData);
+      console.log("data", data);
     } catch (error) {
       console.log("data submittin error", error);
-      toast.error(error.data?.message || "updatation error");
+      return toast.error(error.data?.message || "updatation error");
     }
   };
   const handleCanel = () => {

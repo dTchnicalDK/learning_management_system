@@ -3,7 +3,7 @@ const BASE_URL = import.meta.VITE_BASE_API || "http://localhost:3000/api/v1/";
 
 export const courseApi = createApi({
   reducerPath: "courseApi",
-  tagTypes: ["Refetch_Course"],
+  tagTypes: ["Refetch_Course", "Refresh_Lecture"],
   baseQuery: fetchBaseQuery({ baseUrl: BASE_URL, credentials: "include" }),
 
   endpoints: (builder) => ({
@@ -42,11 +42,21 @@ export const courseApi = createApi({
     }),
 
     ///lecture api////
-    createLecture: builder.mutation({
+    getCourseLectures: builder.query({
       query: (courseId) => ({
-        url: `/tutor/course/${courseId}/create-lecture`,
-        method: "POST",
+        url: `/tutor/course/${courseId}/lectures`,
+        method: "GET",
       }),
+      providesTags: ["Refresh_Lecture"],
+    }),
+
+    createLecture: builder.mutation({
+      query: (reqData) => ({
+        url: `/tutor/course/${reqData.courseId}/create-lecture`,
+        method: "POST",
+        body: reqData,
+      }),
+      invalidatesTags: ["Refresh_Lecture"],
     }),
   }),
 });
@@ -56,4 +66,6 @@ export const {
   useUpdateCourseMutation,
   useGetAllCoursesQuery,
   useGetCourseByIdQuery,
+  useCreateLectureMutation,
+  useGetCourseLecturesQuery,
 } = courseApi;

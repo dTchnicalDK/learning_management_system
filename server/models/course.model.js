@@ -19,8 +19,18 @@ const courseSchema = new mongoose.Schema(
     coursePrice: { type: Number, default: 0 },
     courseThumbnail: { type: String },
     creator: { type: mongoose.Schema.Types.ObjectId, ref: "User" },
-    enrolledStudents: { type: mongoose.Schema.Types.ObjectId },
-    lectures: { type: String },
+    enrolledStudents: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "User",
+      },
+    ],
+    lectures: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "Lecture",
+      },
+    ],
     isPublished: { type: Boolean, default: false },
   },
   { timestamps: true }

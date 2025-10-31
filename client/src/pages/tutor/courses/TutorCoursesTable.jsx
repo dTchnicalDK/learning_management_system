@@ -13,7 +13,7 @@ import { Edit, Loader } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { useGetAllCoursesQuery } from "@/features/api/courseApi";
 import { toast } from "sonner";
-import { useNavigate } from "react-router";
+import { Link, useNavigate } from "react-router";
 
 const courses = [
   {
@@ -68,7 +68,7 @@ const TutorCoursesTable = () => {
         onClick={() => {
           navigate("/tutor/course/create-course");
         }}
-        className="cursor-pointer max-w-xs"
+        className="cursor-pointer max-w-xs bg-blue-600 hover:bg-blue-700 text-xl"
       >
         + Add course
       </Button>
@@ -90,7 +90,11 @@ const TutorCoursesTable = () => {
               return (
                 <TableRow key={course._id}>
                   <TableCell className="font-medium">{index + 1}</TableCell>
-                  <TableCell>{course.courseTitle}</TableCell>
+                  <TableCell>
+                    <Link to={`/tutor/course/${course._id}/lectures`}>
+                      {course.courseTitle}
+                    </Link>
+                  </TableCell>
                   <TableCell>
                     <Badge variant="default" className="text-sky-50">
                       {course.courseStatus ? <>Published</> : <>Draft</>}

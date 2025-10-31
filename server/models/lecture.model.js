@@ -7,9 +7,10 @@ const lectureSchema = new mongoose.Schema(
 
     videoUrl: { type: String },
     publicId: { type: String },
-    isPreviewFree: { type: Boolean, default: false },
+    isPreviewFree: { type: Boolean },
+    course: { type: mongoose.Schema.Types.ObjectId, ref: "course" },
   },
   { timestamps: true }
 );
 
-export const Lecture = mongoose.model("lecture", lectureSchema, "lectures");
+export const Lecture = mongoose.model("Lecture", lectureSchema, "lectures");

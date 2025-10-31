@@ -142,15 +142,6 @@ export const editCourse = async (req, res) => {
       const isOldPhotoDeleted = await deleteMediaFromCloudinary(publicId);
     }
 
-    // Delete the local temp file after the Cloudinary upload is complete
-
-    // try {
-    //   await fs.unlink(courseThumbnail.path);
-    //   console.log("temp file deleted");
-    // } catch (error) {
-    //   return console.error("Error deleting temp courseThumbnail:", error);
-    // }
-
     const updatedCourseValues = await Course.findByIdAndUpdate(
       { _id: courseId },
       {
@@ -166,10 +157,10 @@ export const editCourse = async (req, res) => {
     );
 
     return res.status(200).json({
-      message: `course:-- ${courseTitle}-- updated into --${updatedCourseValues.courseTitle}`,
+      message: `course updated into --${updatedCourseValues.courseTitle}`,
     });
   } catch (error) {
-    console.log("course edit error", error);
+    return console.log("course edit error", error);
   } finally {
     const cleanupTempFile = async (filePath) => {
       if (!filePath) return;
