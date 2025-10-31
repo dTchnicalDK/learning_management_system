@@ -12,7 +12,11 @@ export const getAllCourses = async (req, res) => {
     if (course.length <= 0) {
       return res
         .status(200)
-        .json({ message: "no course created yet! create now!", success: true });
+        .json({
+          message: "no course created yet! create now!",
+          success: true,
+          course: [],
+        });
     }
     return res
       .status(200)

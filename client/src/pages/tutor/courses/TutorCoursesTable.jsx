@@ -85,7 +85,16 @@ const TutorCoursesTable = () => {
           </TableRow>
         </TableHeader>
         <TableBody>
-          {courseData &&
+          {courseData?.course.length <= 0 ? (
+            <>
+              <TableRow>
+                <TableCell className="col-span-4 text-center">
+                  <h1>No Course created yet! create one!</h1>
+                </TableCell>
+              </TableRow>
+            </>
+          ) : (
+            // {courseData &&
             courseData.course.map((course, index) => {
               return (
                 <TableRow key={course._id}>
@@ -116,7 +125,8 @@ const TutorCoursesTable = () => {
                   </TableCell>
                 </TableRow>
               );
-            })}
+            })
+          )}
         </TableBody>
       </Table>
     </div>

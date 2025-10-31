@@ -14,7 +14,7 @@ import {
 } from "@/features/api/courseApi";
 import { Loader2 } from "lucide-react";
 import React, { useEffect, useState } from "react";
-import { useParams } from "react-router";
+import { useNavigate, useParams } from "react-router";
 import { toast } from "sonner";
 
 const CreateLecture = () => {
@@ -27,6 +27,7 @@ const CreateLecture = () => {
     lectureDescription: "",
     isPreviewFree: true,
   });
+  const navigate = useNavigate();
   // const isLoading = false;
   //toasting messages
   useEffect(() => {
@@ -49,6 +50,7 @@ const CreateLecture = () => {
         lectureDescription: lecture.lectureDescription,
         isPreviewFree: lecture.isPreviewFree,
       });
+      navigate(`/tutor/course/${params.courseId}/lectures`);
     } catch (error) {
       console.log("course creation error");
       toast.error(error.message || "creation error");

@@ -54,7 +54,7 @@ const LecturesTable = () => {
       </Button>
 
       <Table>
-        <TableCaption>A list of your launched / draft courses.</TableCaption>
+        <TableCaption>A list of Letures of this courses.</TableCaption>
         <TableHeader>
           <TableRow>
             <TableHead className="w-[100px]">Sl. No.</TableHead>
