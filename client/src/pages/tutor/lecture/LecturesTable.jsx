@@ -14,7 +14,7 @@ import React, { useEffect } from "react";
 import { useNavigate, useParams } from "react-router";
 import { toast } from "sonner";
 import moment from "moment";
-import { Edit } from "lucide-react";
+import { ArrowLeft, Edit } from "lucide-react";
 
 const LecturesTable = () => {
   const navigate = useNavigate();
@@ -44,14 +44,25 @@ const LecturesTable = () => {
         Your course contains the following lectures
       </h1>
 
-      <Button
-        onClick={() => {
-          navigate(`/tutor/course/${params.courseId}/lecture/create`);
-        }}
-        className="cursor-pointer max-w-xs bg-blue-600 hover:bg-blue-700 text-xl"
-      >
-        + Add Lecture
-      </Button>
+      <div className="flex gap-3">
+        <Button
+          onClick={() => {
+            navigate(`/tutor/course/${params.courseId}/lecture/create`);
+          }}
+          className="cursor-pointer max-w-xs bg-blue-600 dark:bg-blue-900 hover:bg-blue-700 dark:hover:bg-blue-950 text-lg text-blue-50"
+        >
+          + Add Lecture
+        </Button>
+
+        <Button
+          onClick={() => {
+            navigate(`/tutor/courses-table`);
+          }}
+          className="cursor-pointer max-w-xs bg-red-600 dark:bg-red-900 hover:bg-red-700 dark:hover:bg-red-950 text-lg text-red-50"
+        >
+          <ArrowLeft /> Back to Courses
+        </Button>
+      </div>
 
       <Table>
         <TableCaption>A list of Letures of this courses.</TableCaption>

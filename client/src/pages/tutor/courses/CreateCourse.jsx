@@ -21,13 +21,26 @@ const CreateCourse = () => {
     useCreateCourseMutation();
   const [category, setCategory] = useState("");
 
-  const handleCreateLecture = async (e) => {
+  const handleCreateCourse = async (e) => {
     e.preventDefault();
-    const formData = { courseTitle, category };
-    await createCourse(formData).unwrap();
-    navigate("/tutor/courses-table");
+    try {
+      const formData = { courseTitle, category };
+      await createCourse(formData).unwrap();
+      navigate("/tutor/courses-table");
+    } catch (error) {
+      console.log("create course error", error);
+      toast.error(error.message || "create course error");
+    }
   };
-
+  const handleCancel = (e) => {
+    e.preventDefault();
+    const confirmCancel = confirm(
+      "Are you sure to cancel Create course, changes will be discarded ?"
+    );
+    if (confirmCancel) {
+      navigate("/tutor/courses-table");
+    } else return;
+  };
   useEffect(() => {
     if (error) {
       toast.error(error.data.message || "course creation error");
@@ -46,7 +59,7 @@ const CreateCourse = () => {
         This will create new course, where you can add many lectures further!
       </p>
       <div className="mt-3">
-        <form className="space-y-4" onSubmit={handleCreateLecture}>
+        <form className="space-y-4" onSubmit={handleCreateCourse}>
           <div className="space-y-1">
             <Label>Course Title</Label>
             <Input
@@ -71,7 +84,7 @@ const CreateCourse = () => {
             </Select>
             <div className="w-1/2 flex justify-around items-center ">
               <Button
-                onClick={() => navigate("/tutor/courses-table")}
+                onClick={handleCancel}
                 variant="ouline"
                 className="cursor-pointer"
               >

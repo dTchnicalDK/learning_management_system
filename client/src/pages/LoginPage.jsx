@@ -76,11 +76,9 @@ const LoginPage = () => {
     try {
       const response = await action(inputData).unwrap();
       if (response.user.role === "tutor") {
-        console.log("response login", response.user.role);
         navigate("/tutor");
       } else {
         navigate("/student");
-        console.log("response login", response.user.role);
       }
     } catch (error) {
       console.log("handle submit error", error);

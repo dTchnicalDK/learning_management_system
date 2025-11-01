@@ -22,7 +22,7 @@ import {
 } from "@/features/api/courseApi.js";
 import { Loader2 } from "lucide-react";
 import { toast } from "sonner";
-import { Await, useNavigate, useParams } from "react-router";
+import { Await, Link, useNavigate, useParams } from "react-router";
 
 const EditCourse = () => {
   const params = useParams();
@@ -107,7 +107,7 @@ const EditCourse = () => {
     //submitting data/ calling api
     try {
       await updateCourse(formData);
-      console.log("data", data);
+      navigate("/tutor/courses-table");
     } catch (error) {
       console.log("data submittin error", error);
       return toast.error(error.data?.message || "updatation error");
@@ -140,7 +140,9 @@ const EditCourse = () => {
           <CardDescription>
             Here you can edit courses already created!
           </CardDescription>
-          <CardAction>Card Action</CardAction>
+          <CardAction className="text-blue-700 underline">
+            <Link to={"/tutor"}>Back to Dashboard</Link>
+          </CardAction>
         </CardHeader>
         <CardContent className="space-y-2">
           {inputError && <span className="text-red-500">{inputError}</span>}
@@ -264,7 +266,7 @@ const EditCourse = () => {
               type="submit"
               disabled={isLoading}
               onClick={handleSubmit}
-              className="flex-1 bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 px-4 rounded-md transition-colors duration-200"
+              className="flex-1 bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 px-4 rounded-md transition-colors duration-200 cursor-pointer"
             >
               {isLoading ? (
                 <>
@@ -279,7 +281,7 @@ const EditCourse = () => {
               type="button"
               variant="outline"
               onClick={handleCanel}
-              className="flex-1"
+              className="flex-1 cursor-pointer"
             >
               Cancel
             </Button>

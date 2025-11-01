@@ -55,8 +55,18 @@ const CreateLecture = () => {
       console.log("course creation error");
       toast.error(error.message || "creation error");
     }
-    console.log("handle create lecture ran", lecture);
   };
+
+  const handleCancel = (e) => {
+    e.preventDefault();
+    const confirmCancel = confirm(
+      "Are you sure to cancel create course, and discard Changes ? "
+    );
+    if (confirmCancel) {
+      navigate(`/tutor/course/${params.courseId}/lectures`);
+    } else return;
+  };
+
   return (
     <div>
       <h1 className="text-3xl font-bold">
@@ -129,11 +139,11 @@ const CreateLecture = () => {
               )}
             </Button>
             <Button
-              // onClick={() => navigate("/tutor/courses-table")}
+              onClick={handleCancel}
               variant="ouline"
               className="cursor-pointer"
             >
-              cancel
+              Back to Lectures
             </Button>
           </div>
         </form>

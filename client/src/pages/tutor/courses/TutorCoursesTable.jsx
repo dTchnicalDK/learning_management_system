@@ -9,7 +9,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
-import { Edit, Loader } from "lucide-react";
+import { ArrowLeft, Edit, Loader } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { useGetAllCoursesQuery } from "@/features/api/courseApi";
 import { toast } from "sonner";
@@ -60,9 +60,17 @@ const TutorCoursesTable = () => {
 
   return (
     <div className="w-full flex flex-col space-y-5">
-      <h1 className="text-2xl font-bold text-center">
-        Your have created following courses
-      </h1>
+      <div className="title flex gap-5">
+        <Button
+          onClick={() => navigate("/tutor")}
+          className="rounded-full w-fit bg-white dark:bg-gray-900 hover:bg-blue-50 hover:dark:bg-blue-950 cursor-pointer text-gray-950 dark:text-blue-50"
+        >
+          <ArrowLeft />
+        </Button>
+        <h1 className="text-2xl font-bold text-center">
+          Your have created following courses
+        </h1>
+      </div>
 
       <Button
         onClick={() => {
