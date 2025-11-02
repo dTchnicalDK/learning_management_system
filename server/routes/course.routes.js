@@ -10,6 +10,7 @@ import {
 import {
   createLecture,
   getAllLecturesOfCourse,
+  getLectureById,
 } from "../controllers/lecture.controller.js";
 const tutorRouter = express.Router();
 
@@ -26,4 +27,5 @@ tutorRouter.get("/course/:courseId", isUserAuthenticated, getCourseById);
 /////////////lecture routes//////////////////
 tutorRouter.post("/course/:courseid/create-lecture", createLecture);
 tutorRouter.get("/course/:courseId/lectures", getAllLecturesOfCourse);
+tutorRouter.get("/course/:courseId/lecture/:lectureId", getLectureById);
 export default tutorRouter;

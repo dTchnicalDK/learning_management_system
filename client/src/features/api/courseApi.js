@@ -50,6 +50,14 @@ export const courseApi = createApi({
       providesTags: ["Refresh_Lecture"],
     }),
 
+    getLectureById: builder.query({
+      query: (ids) => ({
+        url: `/tutor/course/${ids.courseId}/lecture/${ids.lectureId}`,
+        method: "GET",
+      }),
+      providesTags: ["Refetch_Course"],
+    }),
+
     createLecture: builder.mutation({
       query: (reqData) => ({
         url: `/tutor/course/${reqData.courseId}/create-lecture`,
@@ -68,4 +76,5 @@ export const {
   useGetCourseByIdQuery,
   useCreateLectureMutation,
   useGetCourseLecturesQuery,
+  useGetLectureByIdQuery,
 } = courseApi;

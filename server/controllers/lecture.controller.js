@@ -109,3 +109,26 @@ export const getAllLecturesOfCourse = async (req, res) => {
     });
   }
 };
+////////////Get Lectures of course///////////////////
+export const getLectureById = async (req, res) => {
+  const { lectureId } = req.params;
+
+  if (!lectureId) {
+    return res
+      .status(400)
+      .json({ message: "mandatory field is missing", success: false });
+  }
+  try {
+    const lecture = await Lecture.findById(lectureId);
+    res.status(200).json({
+      message: "Lecture fetched successfully",
+      success: true,
+      lecture,
+    });
+  } catch (error) {
+    console.log("lecture error", error);
+    return res.status(500).json({
+      message: error.message || "getLectureById internal server error",
+    });
+  }
+};
