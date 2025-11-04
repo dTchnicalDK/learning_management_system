@@ -9,6 +9,7 @@ import {
 } from "../controllers/course.controller.js";
 import {
   createLecture,
+  editLecture,
   getAllLecturesOfCourse,
   getLectureById,
 } from "../controllers/lecture.controller.js";
@@ -25,7 +26,8 @@ tutorRouter.get("/course", getAllCourses);
 tutorRouter.get("/course/:courseId", isUserAuthenticated, getCourseById);
 
 /////////////lecture routes//////////////////
-tutorRouter.post("/course/:courseid/create-lecture", createLecture);
+tutorRouter.post("/course/:courseId/create-lecture", createLecture);
 tutorRouter.get("/course/:courseId/lectures", getAllLecturesOfCourse);
 tutorRouter.get("/course/:courseId/lecture/:lectureId", getLectureById);
+tutorRouter.put("/course/:courseId/lecture/:lectureId/edit", editLecture);
 export default tutorRouter;

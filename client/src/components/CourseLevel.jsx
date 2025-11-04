@@ -22,9 +22,9 @@ const CourseLevel = ({ courseLevel, setCourseLevel }) => {
           <SelectValue placeholder="Select level" />
         </SelectTrigger>
         <SelectContent>
-          <SelectItem value="basic">Basic</SelectItem>
-          <SelectItem value="intermediate">Intermediate</SelectItem>
-          <SelectItem value="advance">Advance</SelectItem>
+          <SelectItem value="Basic">Basic</SelectItem>
+          <SelectItem value="Intermediate">Intermediate</SelectItem>
+          <SelectItem value="Advance">Advance</SelectItem>
         </SelectContent>
       </Select>
     </div>

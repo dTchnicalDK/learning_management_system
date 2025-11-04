@@ -54,7 +54,61 @@ export const createLecture = async (req, res) => {
 };
 ////////////Lecture edit///////////////////
 export const editLecture = async (req, res) => {
+  const {
+    lectureTitle,
+    lectureDescription,
+    isPreviewFree,
+    videoUrl,
+    publicId,
+    // courseId,
+    // lectureId,
+  } = req.body;
+
+  const { courseId, lectureId } = req.params;
+
   try {
+    if (!videoUrl || !publicId || !courseId || !lectureId || !lectureTitle) {
+      return res.status(400).json({
+        success: false,
+        message: "All mandatory fields are required",
+      });
+    }
+    // Check if course exists
+    const course = await Course.findById(courseId);
+    if (!course) {
+      return res.status(404).json({
+        success: false,
+        message: "Course not found",
+      });
+    }
+    const updatedLecture = await Lecture.findByIdAndUpdate(
+      lectureId,
+      {
+        lectureTitle,
+        lectureDescription,
+        isPreviewFree: Boolean(isPreviewFree),
+        videoUrl,
+        publicId,
+      },
+      { new: true, runValidators: true }
+    );
+    if (!updatedLecture) {
+      return res.status(404).json({
+        success: false,
+        message: "Lecture not found",
+      });
+    }
+
+    // Adding lecture id to course if not already present
+    if (!course.lectures.includes(updatedLecture._id)) {
+      course.lectures.push(updatedLecture._id);
+      await course.save();
+    }
+
+    return res.status(200).json({
+      message: "lecture updated successfully!",
+      lecture: updatedLecture,
+    });
   } catch (error) {
     console.log("lectureEdtion error", error);
     return res.status(500).json({

@@ -21,7 +21,6 @@ const LecturesTable = () => {
   const params = useParams();
   const { courseId } = params;
 
-  console.log("params id", courseId);
   const { data, error, isLoading, isSuccess } =
     useGetCourseLecturesQuery(courseId);
 
@@ -30,9 +29,9 @@ const LecturesTable = () => {
     if (error) {
       toast.error(error.data?.message || "course fetching error error");
     }
-    if (data) {
-      console.log("lectures", data);
-    }
+    // if (data) {
+    //   console.log("lectures", data);
+    // }
   }, [isSuccess, error]);
   if (isLoading) {
     return <h1>loading...</h1>;

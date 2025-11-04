@@ -66,6 +66,24 @@ export const courseApi = createApi({
       }),
       invalidatesTags: ["Refresh_Lecture"],
     }),
+
+    // In your courseApi.js
+    updateLecture: builder.mutation({
+      query: (formData) => {
+        // Extract IDs from the formData
+        const { courseId, lectureId, ...bodyData } = formData;
+
+        console.log("RTK Query - IDs:", { courseId, lectureId });
+        console.log("RTK Query - Body:", bodyData);
+
+        return {
+          url: `/tutor/course/${courseId}/lecture/${lectureId}/edit`,
+          method: "PUT",
+          body: bodyData, // Only send the lecture data, not the IDs in body
+        };
+      },
+      invalidatesTags: ["Refresh_Lecture"],
+    }),
   }),
 });
 
@@ -77,4 +95,5 @@ export const {
   useCreateLectureMutation,
   useGetCourseLecturesQuery,
   useGetLectureByIdQuery,
+  useUpdateLectureMutation,
 } = courseApi;

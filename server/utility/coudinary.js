@@ -20,6 +20,7 @@ export const uploadMediaToCloudinary = async (
       .catch((error) => {
         console.log(error);
       });
+    // console.log("inside cloudinary", uploadResult);
     return uploadResult;
   } catch (error) {
     console.log("coudinary upload error", error);
