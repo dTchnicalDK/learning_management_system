@@ -1,4 +1,7 @@
-import { uploadMediaToCloudinary } from "../utility/coudinary.js";
+import {
+  deleteMediaFromCloudinary,
+  uploadMediaToCloudinary,
+} from "../utility/coudinary.js";
 import { Course } from "../models/course.model.js";
 import { Lecture } from "../models/lecture.model.js";
 
@@ -86,6 +89,17 @@ export const editLecture = async (req, res) => {
         message: "Course not found",
       });
     }
+    //checking if lecture has already video uploaded
+    const oldLectureVideo = await Lecture.findById(lectureId);
+    if (oldLectureVideo && oldLectureVideo.publicId) {
+      const deletedVideo = await deleteMediaFromCloudinary(
+        oldLectureVideo.publicId
+      );
+      console.log("old video deleted successfully", deletedVideo);
+    } else {
+      console.log("no old video found");
+    }
+
     const updatedLecture = await Lecture.findByIdAndUpdate(
       lectureId,
       {

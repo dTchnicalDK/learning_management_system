@@ -35,7 +35,7 @@ export const deleteMediaFromCloudinary = async (publicId) => {
   try {
     const isDeleteSuccessfull = await cloudinary.uploader.destroy(publicId, {
       invalidate: true,
-      resource_type: "image",
+      resource_type: "video" || "image",
     });
     // console.log("cloudinary resp", isDeleteSuccessfull);
     if (isDeleteSuccessfull.result === "ok") {

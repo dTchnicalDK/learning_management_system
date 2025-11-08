@@ -21,7 +21,7 @@ mediaRouter.post(
         folder: "LMS/lectureVideo",
       });
       tempVideoPath = lectureVideo;
-      console.log("temp path", tempVideoPath);
+
       return res
         .status(201)
         .json({ message: "video uploaded!", uploadedVideoInfo });
@@ -35,7 +35,6 @@ mediaRouter.post(
           try {
             await fs.access(filePath);
             await fs.unlink(filePath);
-            console.log("Temp file deleted:", filePath);
           } catch (error) {
             if (error.code === "ENOENT") {
               console.log("Temp file already deleted:", filePath);
