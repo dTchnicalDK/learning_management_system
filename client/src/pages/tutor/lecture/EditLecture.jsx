@@ -14,8 +14,7 @@ import { Link, useNavigate, useParams } from "react-router";
 import { toast } from "sonner";
 
 const EditLecture = () => {
-  const { courseId, lectureId } = useParams();
-
+  const { courseId, lectureId, courseTitleParam } = useParams();
   const [videoProgress, setVideoProgress] = useState(false);
   const [videoProgressPercent, setVideoProgressPercent] = useState(0);
   const [lecture, setLecture] = useState({
@@ -25,7 +24,6 @@ const EditLecture = () => {
     videoUrl: "",
     publicId: "",
   });
-
   const ids = { courseId, lectureId };
   const { data, isLoading, error, isSuccess } = useGetLectureByIdQuery(ids);
   const [
@@ -47,7 +45,7 @@ const EditLecture = () => {
     }
   }, [courseId, lectureId, navigate]);
 
-  //toasting messages - FIXED ERROR HANDLING
+  //toasting messages
   useEffect(() => {
     if (isSuccess && data) {
       setLecture({
@@ -66,7 +64,7 @@ const EditLecture = () => {
     }
     if (updateLectureIsSuccess) {
       toast.success(updatedLectureData?.message || "lecture updated!");
-      navigate(`/tutor/course/${courseId}/lectures`);
+      navigate(`/tutor/course/${courseId}/${courseTitleParam}/lectures`);
     }
     if (updateLectureError) {
       console.log("lecture update error", updateLectureError);
@@ -132,7 +130,6 @@ const EditLecture = () => {
     }
   };
 
-  //updating lecture api - FIXED THE MAIN BUG
   const handleSubmit = async (e) => {
     e.preventDefault();
 
@@ -143,7 +140,10 @@ const EditLecture = () => {
     }
 
     // Validate required fields
-    if (!lecture.lectureTitle || !lecture.videoUrl) {
+    if (
+      !lecture.lectureTitle
+      // || !lecture.videoUrl
+    ) {
       toast.error("Lecture title and video are required!");
       return;
     }
@@ -155,7 +155,6 @@ const EditLecture = () => {
         lectureId: lectureId,
       };
       console.log("lecture in submit", lectureData);
-      // FIXED: Call updateLecture with lectureData instead of lecture
       await updateLecture(lectureData);
     } catch (error) {
       console.log("update lecture error", error);
@@ -169,7 +168,7 @@ const EditLecture = () => {
       "Are you sure to cancel create course, and discard Changes ? "
     );
     if (confirmCancel) {
-      navigate(`/tutor/course/${courseId}/lectures`);
+      navigate(`/tutor/course/${courseId}/${courseTitleParam}/lectures`);
     } else return;
   };
 
@@ -218,20 +217,18 @@ const EditLecture = () => {
             <Label>Lecture video *</Label>
             <Input
               type="file"
-              required
+              // required
               name="lectureVideo"
               onChange={handleVideochange}
               placeholder="Enter what this lecture explains"
             />
           </div>
 
-          {/* --------------------------------------- */}
+          {/* ------------------previewing video--------------------- */}
           {lecture.videoUrl && (
             <div className="space-y-1">
               <Label>Current Video:</Label>
-              <div className="text-sm text-green-600">
-                Video uploaded successfully ✓
-              </div>
+              <div className="text-sm text-green-600">Video added ✓</div>
               <video
                 src={lecture.videoUrl}
                 controls
@@ -242,6 +239,7 @@ const EditLecture = () => {
             </div>
           )}
           {/* --------------------------------------- */}
+
           {/* //swith button---- */}
           <div className="flex gap-4">
             <Label htmlFor="isPreviewFree">Is this lecture free</Label>
@@ -252,6 +250,7 @@ const EditLecture = () => {
               onCheckedChange={handleIsPreviewFree}
             />
           </div>
+
           {/* /// progress bar------------ */}
           <div className="w-1/2 ">
             {videoProgress ? (

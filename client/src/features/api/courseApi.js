@@ -73,9 +73,6 @@ export const courseApi = createApi({
         // Extract IDs from the formData
         const { courseId, lectureId, ...bodyData } = formData;
 
-        console.log("RTK Query - IDs:", { courseId, lectureId });
-        console.log("RTK Query - Body:", bodyData);
-
         return {
           url: `/tutor/course/${courseId}/lecture/${lectureId}/edit`,
           method: "PUT",

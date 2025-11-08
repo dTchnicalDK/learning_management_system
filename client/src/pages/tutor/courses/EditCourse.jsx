@@ -48,18 +48,17 @@ const EditCourse = () => {
   //after auto fetching, setting initalData to edit
   useEffect(() => {
     const setInitialData = async () => {
-      setCourseTitle(courseInitialData?.course?.courseTitle);
-      setCourseSubTitle(courseInitialData?.course?.courseSubtitle);
-      setDescription(courseInitialData?.course?.description);
-      setCategory(courseInitialData?.course?.category);
-      setCourseLevel(courseInitialData?.course?.courseLevel);
-      setCoursePrice(courseInitialData?.course?.coursePrice);
-      setCourseThumbnail(courseInitialData?.course?.courseThumbnail);
+      // console.log("courseInitialData", courseInitialData);
+      setCourseTitle(courseInitialData.course.courseTitle || "");
+      setCourseSubTitle(courseInitialData.course.courseSubtitle || "");
+      setDescription(courseInitialData.course.description || "");
+      setCategory(courseInitialData.course.category || "");
+      setCourseLevel(courseInitialData.course.courseLevel || "");
+      setCoursePrice(courseInitialData.course.coursePrice?.toString() || "");
+      setCourseThumbnail(courseInitialData.course.courseThumbnail || "");
     };
 
-    if (!courseInitialData) {
-      console.warn("data yet to load");
-    } else {
+    if (courseInitialData) {
       setInitialData();
     }
   }, [courseInitialData]);

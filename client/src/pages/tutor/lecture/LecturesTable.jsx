@@ -14,12 +14,12 @@ import React, { useEffect } from "react";
 import { useNavigate, useParams } from "react-router";
 import { toast } from "sonner";
 import moment from "moment";
-import { ArrowLeft, Edit } from "lucide-react";
+import { ArrowLeft, Delete, Edit } from "lucide-react";
 
 const LecturesTable = () => {
   const navigate = useNavigate();
   const params = useParams();
-  const { courseId } = params;
+  const { courseId, courseTitleParam } = params;
 
   const { data, error, isLoading, isSuccess } =
     useGetCourseLecturesQuery(courseId);
@@ -33,6 +33,10 @@ const LecturesTable = () => {
     //   console.log("lectures", data);
     // }
   }, [isSuccess, error]);
+  const hadleLectureDelete = () => {
+    console.log("delete button clicked");
+  };
+
   if (isLoading) {
     return <h1>loading...</h1>;
   }
@@ -40,13 +44,17 @@ const LecturesTable = () => {
   return (
     <div className="w-full flex flex-col space-y-5">
       <h1 className="text-2xl font-bold text-center">
-        Your course contains the following lectures
+        Course:{" "}
+        <span className="uppercase, italic ">" {courseTitleParam} "</span>
+        lectures
       </h1>
 
       <div className="flex gap-3">
         <Button
           onClick={() => {
-            navigate(`/tutor/course/${params.courseId}/lecture/create`);
+            navigate(
+              `/tutor/course/${params.courseId}/${params.courseTitleParam}/lecture/create`
+            );
           }}
           className="cursor-pointer max-w-xs bg-blue-600 dark:bg-blue-900 hover:bg-blue-700 dark:hover:bg-blue-950 text-lg text-blue-50"
         >
@@ -96,13 +104,22 @@ const LecturesTable = () => {
                     <Button
                       onClick={() =>
                         navigate(
-                          `/tutor/course/${params.courseId}/lecture/${lecture._id}`
+                          `/tutor/course/${params.courseId}/${params.courseTitleParam}/lecture/${lecture._id}`
                         )
                       }
                       variant="ghost"
                       className="cursor-pointer hover:text-sky-500 hover:shadow-xl"
                     >
                       <Edit />
+                    </Button>
+                  </TableCell>
+                  <TableCell className="text-right">
+                    <Button
+                      onClick={hadleLectureDelete}
+                      variant="ghost"
+                      className="cursor-pointer hover:text-sky-500 hover:shadow-xl"
+                    >
+                      <Delete />
                     </Button>
                   </TableCell>
                 </TableRow>

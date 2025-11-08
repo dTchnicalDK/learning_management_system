@@ -32,15 +32,26 @@ function App() {
           <Route path="course/create-course" element={<CreateCourse />} />
           <Route path="course/:id/edit" element={<EditCourse />} />
           {/* -----------lectures---------------------------- */}
-          <Route path="course/:courseId/lectures" element={<LecturesTable />} />
           <Route
-            path="course/:courseId/lecture/create"
+            path="course/:courseId/:courseTitleParam/lectures"
+            element={<LecturesTable />}
+          />
+          <Route
+            path="course/:courseId/:courseTitleParam/lecture/create"
             element={<CreateLecture />}
           />
           <Route
-            path="course/:courseId/lecture/:lectureId"
+            path="course/:courseId/:courseTitleParam/lecture/:lectureId"
             element={<EditLecture />}
           />
+          {/* <Route
+            path="course/:courseId/lecture/create"
+            element={<CreateLecture />}
+          /> */}
+          {/* <Route
+            path="course/:courseId/lecture/:lectureId"
+            element={<EditLecture />}
+          /> */}
         </Route>
 
         <Route path="/" element={<RootLayout />}>

@@ -21,14 +21,14 @@ const CreateLecture = () => {
   const [createLecture, { data, isLoading, isSuccess, error }] =
     useCreateLectureMutation();
   const params = useParams();
-  // console.log("courseId", params.courseId);
+
   const [lecture, setLecture] = useState({
     lectureTitle: "",
     lectureDescription: "",
     isPreviewFree: true,
   });
   const navigate = useNavigate();
-  // const isLoading = false;
+
   //toasting messages
   useEffect(() => {
     if (error) {
@@ -43,14 +43,15 @@ const CreateLecture = () => {
     e.preventDefault();
 
     try {
-      console.log("lecture ", lecture);
       await createLecture({
         courseId: params.courseId,
         lectureTitle: lecture.lectureTitle,
         lectureDescription: lecture.lectureDescription,
         isPreviewFree: lecture.isPreviewFree,
       });
-      navigate(`/tutor/course/${params.courseId}/lectures`);
+      navigate(
+        `/tutor/course/${params.courseId}/${params.courseTitleParam}/lectures`
+      );
     } catch (error) {
       console.log("course creation error");
       toast.error(error.message || "creation error");
@@ -63,14 +64,18 @@ const CreateLecture = () => {
       "Are you sure to cancel create course, and discard Changes ? "
     );
     if (confirmCancel) {
-      navigate(`/tutor/course/${params.courseId}/lectures`);
+      navigate(
+        `/tutor/course/${params.courseId}/${params.courseTitleParam}/lectures`
+      );
     } else return;
   };
 
   return (
     <div>
       <h1 className="text-3xl font-bold">
-        Let's create lectures for this course, to continue learning journey
+        Let's create lectures for{" "}
+        <span className="italic font-semibold">{params.courseTitleParam}</span>{" "}
+        course, to continue learning journey
       </h1>
       <p>
         This will create new lecture, where you can add your video lecture by

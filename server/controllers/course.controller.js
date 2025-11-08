@@ -10,13 +10,11 @@ export const getAllCourses = async (req, res) => {
   try {
     const course = await Course.find();
     if (course.length <= 0) {
-      return res
-        .status(200)
-        .json({
-          message: "no course created yet! create now!",
-          success: true,
-          course: [],
-        });
+      return res.status(200).json({
+        message: "no course created yet! create now!",
+        success: true,
+        course: [],
+      });
     }
     return res
       .status(200)
@@ -54,9 +52,7 @@ export const getCourseById = async (req, res) => {
 /////////////create course///////////////////////
 export const createCourse = async (req, res) => {
   const creator = req.userId;
-  // console.log("creator", creator);
   const { courseTitle, courseSubtitle, category } = req.body;
-  // console.log("req datas", courseTitle, category);
 
   if (!courseTitle || !category) {
     return res.status(400).json({
@@ -65,10 +61,7 @@ export const createCourse = async (req, res) => {
     });
   }
   // ----------non string or emty string validation---------
-  if (
-    // typeof courseTitle !== "string" ||
-    courseTitle.length <= 0
-  ) {
+  if (typeof courseTitle !== "string" || courseTitle.length <= 0) {
     return res.status(400).json({
       message: "course title must be not empty or other than string",
       success: false,
@@ -106,6 +99,16 @@ export const editCourse = async (req, res) => {
     coursePrice,
   } = req.body;
 
+  console.log(
+    courseTitle,
+    courseSubtitle,
+    courseId,
+    description,
+    category,
+    courseLevel,
+    coursePrice
+  );
+
   const userId = req.userId;
   const creator = userId;
   const courseThumbnail = req.file;
@@ -113,76 +116,92 @@ export const editCourse = async (req, res) => {
   if (!courseId || !courseTitle || !category || !creator) {
     return res.status(400).json({ message: "compulsary fields missing" });
   }
+
+  let tempFilePath = null;
+
   try {
     const courseOldValues = await Course.findById({ _id: courseId });
     if (!courseOldValues) {
       return res.status(400).json({ message: "not valid id", success: false });
     }
-    const isDuplicateTitle = await Course.findOne({
-      courseTitle: courseTitle.trim(),
-    });
-    if (isDuplicateTitle) {
-      return res.status(903).json({
-        message: "title already exits, chooose another!",
-        success: false,
+
+    let cloudinaryUrl = null;
+
+    // Only upload to Cloudinary if a new thumbnail was provided
+    if (courseThumbnail) {
+      cloudinaryUrl = await uploadMediaToCloudinary(courseThumbnail.path, {
+        folder: "LMS/coursesThumbnails",
       });
+      tempFilePath = courseThumbnail.path; // Store path for cleanup
+
+      // Delete old courseThumbnail from Cloudinary if new one is uploaded
+      if (courseOldValues.courseThumbnail) {
+        const publicId = courseOldValues.courseThumbnail
+          ?.split("/upload/")
+          .pop()
+          ?.split("/")
+          ?.slice(1)
+          ?.join("/")
+          ?.split(".")[0];
+        console.log("publicId", publicId);
+        if (publicId) {
+          await deleteMediaFromCloudinary(publicId);
+        }
+      }
     }
 
-    //upload to cloudinary
-    const cloudinaryUrl = await uploadMediaToCloudinary(courseThumbnail.path, {
-      folder: "LMS/coursesThumbnails",
-    });
+    // Prepare update data
+    const updateData = {
+      courseTitle: courseTitle.trim(),
+      courseSubtitle: courseSubtitle?.trim(),
+      category,
+      coursePrice: parseInt(coursePrice) || 0,
+      description,
+      courseLevel,
+    };
 
-    //delete old courseThumbnail from cloudinary
-    if (courseOldValues.courseThumbnail) {
-      const publicId = courseOldValues?.courseThumbnail
-        ?.split("/upload/")
-        .pop()
-        .split("/")
-        .slice(1)
-        .join("/")
-        .split(".")[0];
-      console.log("publicId", publicId);
-      const isOldPhotoDeleted = await deleteMediaFromCloudinary(publicId);
+    // Only update thumbnail if a new one was uploaded
+    if (cloudinaryUrl) {
+      updateData.courseThumbnail = cloudinaryUrl.secure_url;
     }
 
     const updatedCourseValues = await Course.findByIdAndUpdate(
       { _id: courseId },
-      {
-        courseTitle: courseTitle.trim(),
-        courseSubtitle: courseSubtitle?.trim(),
-        category,
-        coursePrice,
-        description,
-        courseLevel,
-        courseThumbnail: cloudinaryUrl.secure_url,
-      },
+      updateData,
       { new: true }
     );
 
     return res.status(200).json({
       message: `course updated into --${updatedCourseValues.courseTitle}`,
+      success: true,
+      course: updatedCourseValues,
     });
   } catch (error) {
-    return console.log("course edit error", error);
+    console.log("course edit error", error);
+    return res.status(500).json({
+      message: "Internal server error",
+      success: false,
+    });
   } finally {
-    const cleanupTempFile = async (filePath) => {
-      if (!filePath) return;
+    // Cleanup temp file only if it exists
+    if (tempFilePath) {
+      const cleanupTempFile = async (filePath) => {
+        if (!filePath) return;
 
-      try {
-        await fs.access(filePath); // Check if file exists
-        await fs.unlink(filePath);
-        // console.log("Temp file deleted:", filePath);
-      } catch (error) {
-        if (error.code === "ENOENT") {
-          console.log("Temp file already deleted:", filePath);
-        } else {
-          console.error("Error deleting temp file:", error);
+        try {
+          await fs.access(filePath); // Check if file exists
+          await fs.unlink(filePath);
+          console.log("Temp file deleted:", filePath);
+        } catch (error) {
+          if (error.code === "ENOENT") {
+            console.log("Temp file already deleted:", filePath);
+          } else {
+            console.error("Error deleting temp file:", error);
+          }
         }
-      }
-    };
+      };
 
-    // calling file cleanup function
-    await cleanupTempFile(courseThumbnail.path);
+      await cleanupTempFile(tempFilePath);
+    }
   }
 };

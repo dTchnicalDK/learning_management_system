@@ -60,7 +60,7 @@ const TutorCoursesTable = () => {
 
   return (
     <div className="w-full flex flex-col space-y-5">
-      <div className="title flex gap-5">
+      <div className="title flex gap-5 justify-between items-center ">
         <Button
           onClick={() => navigate("/tutor")}
           className="rounded-full w-fit bg-white dark:bg-gray-900 hover:bg-blue-50 hover:dark:bg-blue-950 cursor-pointer text-gray-950 dark:text-blue-50"
@@ -70,6 +70,17 @@ const TutorCoursesTable = () => {
         <h1 className="text-2xl font-bold text-center">
           Your have created following courses
         </h1>
+        <div className="flex gap-3">
+          <Button
+            variant="outline"
+            className="cursor-pointer max-w-xs bg-blue-600 hover:bg-blue-700 text-xl"
+          >
+            publish
+          </Button>
+          <Button className="cursor-pointer max-w-xs bg-blue-600 hover:bg-blue-700 text-xl">
+            Remove
+          </Button>
+        </div>
       </div>
 
       <Button
@@ -108,7 +119,9 @@ const TutorCoursesTable = () => {
                 <TableRow key={course._id}>
                   <TableCell className="font-medium">{index + 1}</TableCell>
                   <TableCell>
-                    <Link to={`/tutor/course/${course._id}/lectures`}>
+                    <Link
+                      to={`/tutor/course/${course._id}/${course.courseTitle}/lectures`}
+                    >
                       {course.courseTitle}
                     </Link>
                   </TableCell>

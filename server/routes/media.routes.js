@@ -1,12 +1,14 @@
 import express from "express";
 import upload from "../utility/multer.js";
 import { uploadMediaToCloudinary } from "../utility/coudinary.js";
+import fs from "fs/promises";
 const mediaRouter = express.Router();
 
 mediaRouter.post(
   "/upload/video",
   upload.single("lectureVideo"),
   async (req, res) => {
+    let tempVideoPath;
     try {
       const lectureVideo = req.file.path;
 
@@ -18,12 +20,32 @@ mediaRouter.post(
       const uploadedVideoInfo = await uploadMediaToCloudinary(lectureVideo, {
         folder: "LMS/lectureVideo",
       });
-
+      tempVideoPath = lectureVideo;
+      console.log("temp path", tempVideoPath);
       return res
         .status(201)
         .json({ message: "video uploaded!", uploadedVideoInfo });
     } catch (error) {
       console.log("video lecture upload error", error);
+    } finally {
+      //cleaing video temp file
+      if (tempVideoPath) {
+        const cleanupTempFile = async (filePath) => {
+          if (!filePath) return;
+          try {
+            await fs.access(filePath);
+            await fs.unlink(filePath);
+            console.log("Temp file deleted:", filePath);
+          } catch (error) {
+            if (error.code === "ENOENT") {
+              console.log("Temp file already deleted:", filePath);
+            } else {
+              console.error("Error deleting temp file:", error);
+            }
+          }
+        };
+        await cleanupTempFile(tempVideoPath);
+      }
     }
   }
 );

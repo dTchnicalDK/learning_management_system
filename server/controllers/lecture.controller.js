@@ -67,7 +67,12 @@ export const editLecture = async (req, res) => {
   const { courseId, lectureId } = req.params;
 
   try {
-    if (!videoUrl || !publicId || !courseId || !lectureId || !lectureTitle) {
+    if (
+      // !videoUrl || !publicId ||
+      !courseId ||
+      !lectureId ||
+      !lectureTitle
+    ) {
       return res.status(400).json({
         success: false,
         message: "All mandatory fields are required",
