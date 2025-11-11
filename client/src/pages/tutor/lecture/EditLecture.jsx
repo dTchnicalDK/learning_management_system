@@ -25,7 +25,8 @@ const EditLecture = () => {
     publicId: "",
   });
   const ids = { courseId, lectureId };
-  const { data, isLoading, error, isSuccess } = useGetLectureByIdQuery(ids);
+  const { data, isLoading, error, isSuccess, refetch } =
+    useGetLectureByIdQuery(ids);
   const [
     updateLecture,
     {
@@ -68,7 +69,7 @@ const EditLecture = () => {
     }
     if (updateLectureError) {
       console.log("lecture update error", updateLectureError);
-      // FIXED: Use updateLectureError instead of error
+
       toast.error(
         updateLectureError?.data?.message || "error while updating lecture!"
       );
@@ -88,40 +89,60 @@ const EditLecture = () => {
     setLecture((prev) => ({ ...prev, isPreviewFree: !prev.isPreviewFree }));
   };
 
+  //uploading video on selection
   const handleVideochange = async (e) => {
     const VIDEO_UPLOAD_API = "http://localhost:3000/api/v1/media";
+    const GET_CLOUDINARY_SIGNATURE_API =
+      "http://localhost:3000/api/v1/media/signature";
+
+    const file = e.target.files[0];
+    if (!file) {
+      return toast.error("no file selected");
+    }
+    //1.fetching signature
+    const signResponse = await axios.get(GET_CLOUDINARY_SIGNATURE_API);
+
+    const { signature, timestamp, api_key, cloudName } =
+      await signResponse.data;
+
+    //2.  creating formdata for video file
+    const formData = new FormData();
+    formData.append("file", file);
+    formData.append("timestamp", timestamp);
+    formData.append("api_key", api_key);
+    formData.append("signature", signature);
+    formData.append("folder", "LMS/lectureVideo");
+    formData.append("resource_type", "video");
+
+    //3.uploading video directly to cloudinary from frontend
+    const cloudinaryUrl = `https://api.cloudinary.com/v1_1/${cloudName}/auto/upload`;
     try {
-      const file = e.target.files[0];
-      const fileData = new FormData();
-      fileData.append("lectureVideo", file);
+      setVideoProgress(true);
+      setVideoProgressPercent(0);
 
-      if (file) {
-        setVideoProgress(true);
-        setVideoProgressPercent(0);
-        const videoInfo = await axios.post(
-          `${VIDEO_UPLOAD_API}/upload/video`,
-          fileData,
-          {
-            withCredentials: true,
-            onUploadProgress: (progress) => {
-              if (progress.total) {
-                setVideoProgressPercent(
-                  Math.round((progress.loaded * 100) / progress.total)
-                );
-              } else {
-                setVideoProgressPercent(() => `${progress.loaded} bytes`);
-              }
-            },
+      const videoInfo = await axios.post(cloudinaryUrl, formData, {
+        //5.showing progress of uploading video
+        onUploadProgress: (progress) => {
+          if (progress.total) {
+            setVideoProgressPercent(
+              Math.round((progress.loaded * 100) / progress.total)
+            );
+          } else {
+            setVideoProgressPercent(() => `${progress.loaded} bytes`);
           }
-        );
-
-        setLecture((prev) => ({
-          ...prev,
-          videoUrl: videoInfo.data.uploadedVideoInfo.secure_url,
-          publicId: videoInfo.data.uploadedVideoInfo.public_id,
-        }));
-        toast.success(videoInfo.data.message || "video uploaded successfully!");
-      }
+        },
+      });
+      // console.log("uploaded videoinfo", videoInfo);
+      setLecture((prev) => ({
+        ...prev,
+        videoUrl:
+          videoInfo.data.secure_url ||
+          videoInfo.data.uploadedVideoInfo?.secure_url,
+        publicId:
+          videoInfo.data.public_id ||
+          videoInfo.data.uploadedVideoInfo?.public_id,
+      }));
+      toast.success(videoInfo.data.message || "video uploaded successfully!");
     } catch (error) {
       console.log("video upload error", error);
       toast.error(error.response?.data?.message || "video upload error!");
@@ -154,7 +175,7 @@ const EditLecture = () => {
         courseId: courseId,
         lectureId: lectureId,
       };
-      console.log("lecture in submit", lectureData);
+      // console.log("lecture in submit", lectureData);
       await updateLecture(lectureData);
     } catch (error) {
       console.log("update lecture error", error);

@@ -1,5 +1,6 @@
 import { v2 as cloudinary } from "cloudinary";
 import dotenv from "dotenv";
+import { json } from "express";
 dotenv.config({});
 
 // Configuration
@@ -56,4 +57,21 @@ export const deleteVideoFromCloudinary = async (videoPublicId) => {
   } catch (error) {
     console.log("video delete error from cloudinary", error);
   }
+};
+
+//generating signature for direct frontEnd upload
+export const generateSign = async (req, res) => {
+  const timestamp = Math.round(Date.now() / 1000);
+
+  const signature = cloudinary.utils.api_sign_request(
+    { timestamp, folder: "LMS/lectureVideo" },
+    process.env.API_SECRET
+  );
+  res.status(200).json({
+    message: "signature generated",
+    signature,
+    timestamp,
+    api_key: process.env.API_KEY,
+    cloudName: process.env.CLOUD_NAME,
+  });
 };

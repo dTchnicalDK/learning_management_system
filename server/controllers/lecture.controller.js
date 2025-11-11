@@ -10,13 +10,6 @@ export const createLecture = async (req, res) => {
   // console.log("body", req.body);
   const { lectureTitle, lectureDescription, isPreviewFree, courseId } =
     req.body;
-  // const courseId = req.params.courseId;
-  console.log(
-    "destructured req data,",
-    lectureTitle,
-    lectureDescription,
-    courseId
-  );
 
   try {
     if (!courseId || !lectureTitle || !isPreviewFree) {
@@ -95,7 +88,7 @@ export const editLecture = async (req, res) => {
       const deletedVideo = await deleteMediaFromCloudinary(
         oldLectureVideo.publicId
       );
-      console.log("old video deleted successfully", deletedVideo);
+      console.log("old video deleted successfully");
     } else {
       console.log("no old video found");
     }

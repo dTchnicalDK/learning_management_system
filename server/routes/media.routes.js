@@ -1,6 +1,6 @@
 import express from "express";
 import upload from "../utility/multer.js";
-import { uploadMediaToCloudinary } from "../utility/coudinary.js";
+import { generateSign, uploadMediaToCloudinary } from "../utility/coudinary.js";
 import fs from "fs/promises";
 const mediaRouter = express.Router();
 
@@ -48,5 +48,6 @@ mediaRouter.post(
     }
   }
 );
+mediaRouter.get("/signature", generateSign);
 
 export default mediaRouter;
