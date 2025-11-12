@@ -34,7 +34,7 @@ export const createLecture = async (req, res) => {
     });
     course.lectures.push(createdLecture._id);
     await course.save();
-    console.log("createdLecture", createdLecture);
+    // console.log("createdLecture", createdLecture);
     return res.status(201).json({
       message: "Lecture created successfully",
       success: true,
@@ -131,15 +131,34 @@ export const editLecture = async (req, res) => {
 ////////////Lecture Deletion///////////////////
 export const deleteLecture = async (req, res) => {
   const { courseId, lectureId } = req.body;
-  if (!courseId || !lectureId) {
-    res
-      .status(400)
-      .json({ message: "mandatory fields are missing", success: false });
-    const deletedLecture = await Lecture.findByIdAndDelete(lectureId);
-    console.log("deletedLecture", deleteLecture);
-    //remove lecture entry from course array
-  }
+
   try {
+    if (!courseId || !lectureId) {
+      res
+        .status(400)
+        .json({ message: "mandatory fields are missing", success: false });
+    }
+    //deleting video
+    const lectureToBeDeleted = await Lecture.findById({ _id: lectureId });
+
+    if (lectureToBeDeleted.publicId) {
+      await deleteMediaFromCloudinary(lectureToBeDeleted.publicId);
+      console.log("lecture video deleted");
+    }
+    //deleting lecture
+    const deletedLecture = await Lecture.findByIdAndDelete(lectureId, {
+      new: true,
+    });
+
+    //removing lecture id from course
+    await Course.findByIdAndUpdate(courseId, {
+      $pull: { lectures: deletedLecture._id },
+    });
+
+    res.status(200).json({
+      message: "lecture deleted successfully!",
+      data: deleteLecture,
+    });
   } catch (error) {
     console.log("deleteLecture error", error);
     return res.status(500).json({

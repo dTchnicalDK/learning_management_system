@@ -81,6 +81,15 @@ export const courseApi = createApi({
       },
       invalidatesTags: ["Refresh_Lecture"],
     }),
+
+    deleteLecture: builder.mutation({
+      query: ({ courseId, lectureId }) => ({
+        url: `/tutor/course/${courseId}/lecture/${lectureId}/delete`,
+        method: "DELETE",
+        body: { courseId, lectureId },
+      }),
+      invalidatesTags: ["Refresh_Lecture"],
+    }),
   }),
 });
 
@@ -93,4 +102,5 @@ export const {
   useGetCourseLecturesQuery,
   useGetLectureByIdQuery,
   useUpdateLectureMutation,
+  useDeleteLectureMutation,
 } = courseApi;

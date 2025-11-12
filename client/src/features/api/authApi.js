@@ -14,6 +14,7 @@ export const authApi = createApi({
         body: inputData,
       }),
     }),
+
     loginUser: builder.mutation({
       query: (inputData) => ({
         url: "login",
@@ -29,6 +30,7 @@ export const authApi = createApi({
         }
       },
     }),
+
     logOutUser: builder.mutation({
       query: () => ({
         url: "logout",
@@ -42,12 +44,14 @@ export const authApi = createApi({
         }
       },
     }),
+
     getAllUser: builder.mutation({
       query: () => ({
         url: "get-all-users",
         method: "GET",
       }),
     }),
+
     getCurrentUserProfile: builder.query({
       query: () => ({
         url: "userbyid",
@@ -62,6 +66,7 @@ export const authApi = createApi({
         }
       },
     }),
+
     updateProfile: builder.mutation({
       query: (formData) => ({
         url: "update-user",

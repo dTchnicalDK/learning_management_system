@@ -9,6 +9,7 @@ import {
 } from "../controllers/course.controller.js";
 import {
   createLecture,
+  deleteLecture,
   editLecture,
   getAllLecturesOfCourse,
   getLectureById,
@@ -30,4 +31,8 @@ tutorRouter.post("/course/:courseId/create-lecture", createLecture);
 tutorRouter.get("/course/:courseId/lectures", getAllLecturesOfCourse);
 tutorRouter.get("/course/:courseId/lecture/:lectureId", getLectureById);
 tutorRouter.put("/course/:courseId/lecture/:lectureId/edit", editLecture);
+tutorRouter.delete(
+  "/course/:courseId/lecture/:lectureId/delete",
+  deleteLecture
+);
 export default tutorRouter;

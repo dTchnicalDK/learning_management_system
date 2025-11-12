@@ -9,7 +9,10 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { useGetCourseLecturesQuery } from "@/features/api/courseApi";
+import {
+  useDeleteLectureMutation,
+  useGetCourseLecturesQuery,
+} from "@/features/api/courseApi";
 import React, { useEffect } from "react";
 import { useNavigate, useParams } from "react-router";
 import { toast } from "sonner";
@@ -20,21 +23,35 @@ const LecturesTable = () => {
   const navigate = useNavigate();
   const params = useParams();
   const { courseId, courseTitleParam } = params;
-
   const { data, error, isLoading, isSuccess } =
     useGetCourseLecturesQuery(courseId);
+  const [
+    deleteLecture,
+    {
+      data: deletedData,
+      isLoading: isDeleting,
+      error: deleteError,
+      isSuccess: isDeleteSuccess,
+    },
+  ] = useDeleteLectureMutation();
 
   //toasting messages
   useEffect(() => {
     if (error) {
       toast.error(error.data?.message || "course fetching error error");
     }
-    // if (data) {
-    //   console.log("lectures", data);
-    // }
-  }, [isSuccess, error]);
-  const hadleLectureDelete = () => {
-    console.log("delete button clicked");
+    if (deleteError) {
+      toast.error(deleteError.data?.message || "lecture delete error");
+    }
+    if (isDeleteSuccess) {
+      toast.success(deletedData.message || "lecture delete success");
+    }
+  }, [isSuccess, error, isDeleteSuccess, deleteError]);
+
+  ///deleting lecture
+  const hadleLectureDelete = async (e) => {
+    const { courseId, lectureId } = e;
+    await deleteLecture({ courseId, lectureId });
   };
 
   if (isLoading) {
@@ -115,7 +132,12 @@ const LecturesTable = () => {
                   </TableCell>
                   <TableCell className="text-right">
                     <Button
-                      onClick={hadleLectureDelete}
+                      onClick={() =>
+                        hadleLectureDelete({
+                          lectureId: lecture._id,
+                          courseId: params.courseId,
+                        })
+                      }
                       variant="ghost"
                       className="cursor-pointer hover:text-sky-500 hover:shadow-xl"
                     >

@@ -89,9 +89,8 @@ const EditLecture = () => {
     setLecture((prev) => ({ ...prev, isPreviewFree: !prev.isPreviewFree }));
   };
 
-  //uploading video on selection
+  ////////////////uploading video on selection///////////////
   const handleVideochange = async (e) => {
-    const VIDEO_UPLOAD_API = "http://localhost:3000/api/v1/media";
     const GET_CLOUDINARY_SIGNATURE_API =
       "http://localhost:3000/api/v1/media/signature";
 
