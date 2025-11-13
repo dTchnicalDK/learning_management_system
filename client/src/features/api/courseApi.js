@@ -33,6 +33,15 @@ export const courseApi = createApi({
       invalidatesTags: ["Refetch_Course"],
     }),
 
+    publishCourse: builder.mutation({
+      query: ({ courseId, status }) => ({
+        url: `/tutor/course/${courseId}/publish`,
+        method: "POST",
+        body: { status },
+      }),
+      invalidatesTags: ["Refetch_Course"],
+    }),
+
     getCourseById: builder.query({
       query: (courseId) => ({
         url: `/tutor/course/${courseId}`,
@@ -41,7 +50,7 @@ export const courseApi = createApi({
       providesTags: ["Refetch_Course"],
     }),
 
-    ///lecture api////
+    //////// lectures api ////////////
     getCourseLectures: builder.query({
       query: (courseId) => ({
         url: `/tutor/course/${courseId}/lectures`,
@@ -103,4 +112,5 @@ export const {
   useGetLectureByIdQuery,
   useUpdateLectureMutation,
   useDeleteLectureMutation,
+  usePublishCourseMutation,
 } = courseApi;

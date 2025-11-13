@@ -6,6 +6,7 @@ import {
   editCourse,
   getAllCourses,
   getCourseById,
+  publishCourse,
 } from "../controllers/course.controller.js";
 import {
   createLecture,
@@ -25,6 +26,11 @@ tutorRouter.post(
 );
 tutorRouter.get("/course", getAllCourses);
 tutorRouter.get("/course/:courseId", isUserAuthenticated, getCourseById);
+tutorRouter.post(
+  "/course/:courseId/publish",
+  isUserAuthenticated,
+  publishCourse
+);
 
 /////////////lecture routes//////////////////
 tutorRouter.post("/course/:courseId/create-lecture", createLecture);

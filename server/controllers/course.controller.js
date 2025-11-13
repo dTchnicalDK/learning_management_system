@@ -99,16 +99,6 @@ export const editCourse = async (req, res) => {
     coursePrice,
   } = req.body;
 
-  console.log(
-    courseTitle,
-    courseSubtitle,
-    courseId,
-    description,
-    category,
-    courseLevel,
-    coursePrice
-  );
-
   const userId = req.userId;
   const creator = userId;
   const courseThumbnail = req.file;
@@ -203,5 +193,33 @@ export const editCourse = async (req, res) => {
 
       await cleanupTempFile(tempFilePath);
     }
+  }
+};
+
+///////////publish course//////////////////
+export const publishCourse = async (req, res) => {
+  const { courseId } = req.params;
+  const { status } = req.body;
+
+  try {
+    if (!courseId) {
+      return res.status(400).json({
+        message: "courseId is  compulsary!",
+        success: false,
+      });
+    }
+    if (status === "publish") {
+      await Course.findByIdAndUpdate({ _id: courseId }, { isPublished: true });
+      return res.status(200).json({ message: "course is published now" });
+    }
+    if (status === "unpublish") {
+      await Course.findByIdAndUpdate(courseId, { isPublished: false });
+      return res.status(200).json({ message: "course is un-published now" });
+    }
+  } catch (error) {
+    console.log("publish course error", error);
+    return res
+      .status(500)
+      .json({ message: error.message || "course publish server error" });
   }
 };

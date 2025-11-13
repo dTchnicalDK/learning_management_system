@@ -15,23 +15,23 @@ import { useGetAllCoursesQuery } from "@/features/api/courseApi";
 import { toast } from "sonner";
 import { Link, useNavigate } from "react-router";
 
-const courses = [
-  {
-    courseTitle: "sample title this is the sample title",
-    courseStatus: "draft",
-    coursePrice: 200,
-  },
-  {
-    courseTitle: "sample title",
-    courseStatus: "draft",
-    coursePrice: 200,
-  },
-  {
-    courseTitle: "sample title",
-    courseStatus: "draft",
-    coursePrice: 200,
-  },
-];
+// const courses = [
+//   {
+//     courseTitle: "sample title this is the sample title",
+//     courseStatus: "draft",
+//     coursePrice: 200,
+//   },
+//   {
+//     courseTitle: "sample title",
+//     courseStatus: "draft",
+//     coursePrice: 200,
+//   },
+//   {
+//     courseTitle: "sample title",
+//     courseStatus: "draft",
+//     coursePrice: 200,
+//   },
+// ];
 
 const TutorCoursesTable = () => {
   const {
@@ -42,12 +42,12 @@ const TutorCoursesTable = () => {
     isSuccess,
   } = useGetAllCoursesQuery();
   const navigate = useNavigate();
-  // console.log("course data", data);
 
   useEffect(() => {
     if (isError) {
       toast.error(error.data.message || "fetching error");
     }
+    // console.log("coursedata", courseData);
   }, [isError, isSuccess, courseData]);
 
   if (isFetching) {
@@ -60,7 +60,7 @@ const TutorCoursesTable = () => {
 
   return (
     <div className="w-full flex flex-col space-y-5">
-      <div className="title flex gap-5 justify-between items-center ">
+      <div className="title flex gap-10  items-center ">
         <Button
           onClick={() => navigate("/tutor")}
           className="rounded-full w-fit bg-white dark:bg-gray-900 hover:bg-blue-50 hover:dark:bg-blue-950 cursor-pointer text-gray-950 dark:text-blue-50"
@@ -70,17 +70,6 @@ const TutorCoursesTable = () => {
         <h1 className="text-2xl font-bold text-center">
           Your have created following courses
         </h1>
-        <div className="flex gap-3">
-          <Button
-            variant="outline"
-            className="cursor-pointer max-w-xs bg-blue-600 hover:bg-blue-700 text-xl"
-          >
-            publish
-          </Button>
-          <Button className="cursor-pointer max-w-xs bg-blue-600 hover:bg-blue-700 text-xl">
-            Remove
-          </Button>
-        </div>
       </div>
 
       <Button
@@ -114,7 +103,7 @@ const TutorCoursesTable = () => {
             </>
           ) : (
             // {courseData &&
-            courseData.course.map((course, index) => {
+            courseData.course?.map((course, index) => {
               return (
                 <TableRow key={course._id}>
                   <TableCell className="font-medium">{index + 1}</TableCell>
@@ -126,9 +115,18 @@ const TutorCoursesTable = () => {
                     </Link>
                   </TableCell>
                   <TableCell>
-                    <Badge variant="default" className="text-sky-50">
-                      {course.courseStatus ? <>Published</> : <>Draft</>}
-                    </Badge>
+                    {course.isPublished ? (
+                      <Badge
+                        variant="default"
+                        className="text-sky-50 bg-green-500"
+                      >
+                        published
+                      </Badge>
+                    ) : (
+                      <Badge variant="default" className="text-sky-50">
+                        draft
+                      </Badge>
+                    )}
                   </TableCell>
                   <TableCell className="text-right">
                     ₹ {course.coursePrice}

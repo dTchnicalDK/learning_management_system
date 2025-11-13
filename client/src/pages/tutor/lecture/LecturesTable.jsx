@@ -11,18 +11,32 @@ import {
 } from "@/components/ui/table";
 import {
   useDeleteLectureMutation,
+  useGetCourseByIdQuery,
   useGetCourseLecturesQuery,
+  usePublishCourseMutation,
 } from "@/features/api/courseApi";
 import React, { useEffect } from "react";
 import { useNavigate, useParams } from "react-router";
 import { toast } from "sonner";
 import moment from "moment";
-import { ArrowLeft, Delete, Edit } from "lucide-react";
+import {
+  ArrowBigUpDash,
+  ArrowDownLeftFromCircleIcon,
+  ArrowLeft,
+  Delete,
+  Edit,
+} from "lucide-react";
 
 const LecturesTable = () => {
   const navigate = useNavigate();
   const params = useParams();
   const { courseId, courseTitleParam } = params;
+
+  const {
+    data: courseData,
+    isLoading: isCourseLoading,
+    error: courseError,
+  } = useGetCourseByIdQuery(courseId);
   const { data, error, isLoading, isSuccess } =
     useGetCourseLecturesQuery(courseId);
   const [
@@ -34,6 +48,10 @@ const LecturesTable = () => {
       isSuccess: isDeleteSuccess,
     },
   ] = useDeleteLectureMutation();
+  const [
+    publishCourse,
+    { data: publishData, error: publishError, isSuccess: isPublisSuccess },
+  ] = usePublishCourseMutation();
 
   //toasting messages
   useEffect(() => {
@@ -43,15 +61,37 @@ const LecturesTable = () => {
     if (deleteError) {
       toast.error(deleteError.data?.message || "lecture delete error");
     }
-    if (isDeleteSuccess) {
-      toast.success(deletedData.message || "lecture delete success");
+    if (publishError) {
+      toast.error(publishError.data?.message || "course publish error");
     }
-  }, [isSuccess, error, isDeleteSuccess, deleteError]);
+    if (isDeleteSuccess) {
+      toast.success(deletedData.data?.message || "lecture delete success");
+    }
+    if (isPublisSuccess) {
+      toast.success(publishData.message || "couse publish success");
+    }
+    // console.log("courseData", courseData?.course.isPublished);
+  }, [
+    isSuccess,
+    error,
+    isDeleteSuccess,
+    deleteError,
+    publishError,
+    isPublisSuccess,
+  ]);
 
   ///deleting lecture
   const hadleLectureDelete = async (e) => {
     const { courseId, lectureId } = e;
     await deleteLecture({ courseId, lectureId });
+  };
+
+  //publishing course/ unpublishing course
+  const handlePublish = async (status) => {
+    if (data.lectures.length <= 0) {
+      return toast.error("Add lecture first!");
+    }
+    await publishCourse({ courseId, status });
   };
 
   if (isLoading) {
@@ -60,11 +100,35 @@ const LecturesTable = () => {
 
   return (
     <div className="w-full flex flex-col space-y-5">
-      <h1 className="text-2xl font-bold text-center">
-        Course:{" "}
-        <span className="uppercase, italic ">" {courseTitleParam} "</span>
-        lectures
-      </h1>
+      <div className="flex justify-between gap-2">
+        <h1 className="text-2xl font-bold text-center">
+          Course:{" "}
+          <span className="uppercase, italic ">" {courseTitleParam} "</span>
+          lectures
+        </h1>
+        <div className="flex gap-3">
+          {courseData && courseData?.course.isPublished ? (
+            <Button
+              disabled={isCourseLoading}
+              onClick={() => handlePublish("unpublish")}
+              className="cursor-pointer max-w-xs bg-red-600 dark:bg-red-900 hover:bg-red-700 dark:hover:bg-red-950 text-lg text-red-50"
+            >
+              <ArrowDownLeftFromCircleIcon />
+              unpublish
+            </Button>
+          ) : (
+            <Button
+              onClick={() => handlePublish("publish")}
+              disabled={isCourseLoading}
+              // disabled={data.lectures.length <= 0}
+              varient="outline"
+              className="cursor-pointer max-w-xs bg-green-600 dark:bg-green-900 hover:bg-green-700 dark:hover:bg-green-950 text-lg text-red-50"
+            >
+              <ArrowBigUpDash /> Publish Course
+            </Button>
+          )}
+        </div>
+      </div>
 
       <div className="flex gap-3">
         <Button
