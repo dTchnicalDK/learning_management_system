@@ -5,7 +5,7 @@ import {
 } from "../utility/coudinary.js";
 import fs from "fs/promises";
 
-/////////////get courses ////////////////
+/////////////get Allcourses ////////////////
 export const getAllCourses = async (req, res) => {
   try {
     const course = await Course.find();
@@ -21,6 +21,26 @@ export const getAllCourses = async (req, res) => {
       .json({ message: "courses fetched!", success: true, course });
   } catch (error) {
     console.log("gettin course error", error);
+    return res.status(500).json({ message: "course creation server error" });
+  }
+};
+/////////////get  Published courses ////////////////
+export const getPublishedCourses = async (req, res) => {
+  try {
+    const course = await Course.find({ isPublished: true }).lean().exec();
+    // console.log("courses", course);
+    if (course.length <= 0) {
+      return res.status(200).json({
+        message: "no course published yet! visit later!",
+        success: true,
+        course: [],
+      });
+    }
+    return res
+      .status(200)
+      .json({ message: "courses published fetched!", success: true, course });
+  } catch (error) {
+    console.log("getting published course error", error);
     return res.status(500).json({ message: "course creation server error" });
   }
 };

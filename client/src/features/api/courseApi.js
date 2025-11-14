@@ -24,6 +24,14 @@ export const courseApi = createApi({
       providesTags: ["Refetch_Course"],
     }),
 
+    getPublishedCourses: builder.query({
+      query: () => ({
+        url: "/tutor/course/published",
+        method: "GET",
+      }),
+      providesTags: ["Refetch_Course"],
+    }),
+
     updateCourse: builder.mutation({
       query: (formData) => ({
         url: "/tutor/course/edit",
@@ -113,4 +121,5 @@ export const {
   useUpdateLectureMutation,
   useDeleteLectureMutation,
   usePublishCourseMutation,
+  useGetPublishedCoursesQuery,
 } = courseApi;

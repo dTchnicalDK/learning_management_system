@@ -6,6 +6,7 @@ import {
   editCourse,
   getAllCourses,
   getCourseById,
+  getPublishedCourses,
   publishCourse,
 } from "../controllers/course.controller.js";
 import {
@@ -24,6 +25,7 @@ tutorRouter.post(
   upload.single("courseThumbnail"),
   editCourse
 );
+tutorRouter.get("/course/published", getPublishedCourses);
 tutorRouter.get("/course", getAllCourses);
 tutorRouter.get("/course/:courseId", isUserAuthenticated, getCourseById);
 tutorRouter.post(

@@ -10,10 +10,11 @@ import TutorDashboard from "./pages/tutor/courses/TutorDashboard";
 import TutorCoursesTable from "./pages/tutor/courses/TutorCoursesTable";
 import CreateCourse from "./pages/tutor/courses/CreateCourse";
 import EditCourse from "./pages/tutor/courses/EditCourse";
-import ReactQuillEditor from "./components/ReactQuillEditor";
+// import ReactQuillEditor from "./components/ReactQuillEditor";
 import CreateLecture from "./pages/tutor/lecture/CreateLecture";
 import LecturesTable from "./pages/tutor/lecture/LecturesTable";
 import EditLecture from "./pages/tutor/lecture/EditLecture";
+import CourseDetails from "./pages/student/CourseDetails";
 
 function App() {
   return (
@@ -44,19 +45,13 @@ function App() {
             path="course/:courseId/:courseTitleParam/lecture/:lectureId"
             element={<EditLecture />}
           />
-          {/* <Route
-            path="course/:courseId/lecture/create"
-            element={<CreateLecture />}
-          /> */}
-          {/* <Route
-            path="course/:courseId/lecture/:lectureId"
-            element={<EditLecture />}
-          /> */}
         </Route>
 
+        {/* //---------------general route------------------- */}
         <Route path="/" element={<RootLayout />}>
-          <Route index element={<StudentHomePage />} />
           <Route path="/:tab" element={<LoginPage />} />
+          <Route index element={<StudentHomePage />} />
+          <Route path=":courseId/course-details" element={<CourseDetails />} />
         </Route>
       </Routes>
     </>
