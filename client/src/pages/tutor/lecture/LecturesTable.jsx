@@ -12,7 +12,6 @@ import {
 import {
   useDeleteLectureMutation,
   useGetCourseByIdQuery,
-  useGetCourseLecturesQuery,
   usePublishCourseMutation,
 } from "@/features/api/courseApi";
 import React, { useEffect } from "react";
@@ -25,6 +24,7 @@ import {
   ArrowLeft,
   Delete,
   Edit,
+  Loader2,
 } from "lucide-react";
 
 const LecturesTable = () => {
@@ -37,8 +37,7 @@ const LecturesTable = () => {
     isLoading: isCourseLoading,
     error: courseError,
   } = useGetCourseByIdQuery(courseId);
-  const { data, error, isLoading, isSuccess } =
-    useGetCourseLecturesQuery(courseId);
+
   const [
     deleteLecture,
     {
@@ -55,8 +54,8 @@ const LecturesTable = () => {
 
   //toasting messages
   useEffect(() => {
-    if (error) {
-      toast.error(error.data?.message || "course fetching error error");
+    if (courseError) {
+      toast.error(courseError.data?.message || "course fetching error error");
     }
     if (deleteError) {
       toast.error(deleteError.data?.message || "lecture delete error");
@@ -70,10 +69,10 @@ const LecturesTable = () => {
     if (isPublisSuccess) {
       toast.success(publishData.message || "couse publish success");
     }
-    // console.log("courseData", courseData?.course.isPublished);
+    // console.log("courseData", courseData);
   }, [
-    isSuccess,
-    error,
+    // isSuccess,
+    // error,
     isDeleteSuccess,
     deleteError,
     publishError,
@@ -88,14 +87,14 @@ const LecturesTable = () => {
 
   //publishing course/ unpublishing course
   const handlePublish = async (status) => {
-    if (data.lectures.length <= 0) {
+    if (courseData.course.lectures.length <= 0) {
       return toast.error("Add lecture first!");
     }
     await publishCourse({ courseId, status });
   };
 
-  if (isLoading) {
-    return <h1>loading...</h1>;
+  if (isCourseLoading) {
+    return <Loader2 className=" size-20 margin-auto animate-spin " />;
   }
 
   return (
@@ -158,14 +157,15 @@ const LecturesTable = () => {
           <TableRow>
             <TableHead className="w-[100px]">Sl. No.</TableHead>
             <TableHead>Leture Title</TableHead>
-            <TableHead>status</TableHead>
+            <TableHead>Video uploaded</TableHead>
             <TableHead>Created on --- Edited on</TableHead>
             <TableHead className="text-right">Actions</TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>
-          {data &&
-            data.lectures.map((lecture, index) => {
+          {console.log("data", courseData)}
+          {courseData &&
+            courseData.course.lectures?.map((lecture, index) => {
               return (
                 <TableRow key={lecture._id}>
                   <TableCell className="font-medium">{index + 1}</TableCell>
@@ -173,9 +173,16 @@ const LecturesTable = () => {
                     lecture.lectureTitle
                   }`}</TableCell>
                   <TableCell>
-                    <Badge variant="default" className="text-sky-50">
-                      {lecture.courseStatus ? <>Published</> : <>Draft</>}
-                    </Badge>
+                    {/* <Badge variant="default" className="text-sky-50"> */}
+                    {lecture.videoUrl ? (
+                      <Badge className="bg-green-500 dark:bg-green-900 dark:text-white">
+                        yes ✔
+                      </Badge>
+                    ) : (
+                      <Badge className="bg-red-500 dark:bg-red-900 dark:text-white">
+                        No ❌
+                      </Badge>
+                    )}
                   </TableCell>
                   <TableCell className="text-right">
                     {moment(lecture.createdAt).format("DD/MM/YYYY")} --

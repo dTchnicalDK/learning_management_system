@@ -49,8 +49,8 @@ function App() {
 
         {/* //---------------general route------------------- */}
         <Route path="/" element={<RootLayout />}>
-          <Route path="/:tab" element={<LoginPage />} />
           <Route index element={<StudentHomePage />} />
+          <Route path="/:tab" element={<LoginPage />} />
           <Route path=":courseId/course-details" element={<CourseDetails />} />
         </Route>
       </Routes>

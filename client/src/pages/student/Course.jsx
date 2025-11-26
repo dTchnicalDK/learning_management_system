@@ -5,6 +5,7 @@ import React from "react";
 import { Link } from "react-router";
 
 const Course = ({ course }) => {
+  // console.log("course", course);
   return (
     <>
       <Card className=" pt-0 hover:shadow-2xl transform hover:scale-105 transition-all duration-300">
@@ -24,28 +25,36 @@ const Course = ({ course }) => {
             <div className="content flex flex-col gap-y-3">
               <CardTitle>
                 <Link to={`/${course._id}/course-details`}>
-                  <h1 className="text-xl font-bold hover:underline cursor-pointer truncate">
+                  <h1 className="text-xl font-bold text-teal-500 hover:underline cursor-pointer truncate">
                     {course.courseTitle}
                   </h1>
                 </Link>
               </CardTitle>
-              <div className="avtar-batch flex justify-between items-center">
-                <div className="flex flex-col max-w-30">
+              <div className="avtar-batch flex justify-between items-center border-t-2 border-t-gray-950 py-1">
+                <div className="flex w-full justify-between gap-5 py-1">
                   <Avatar>
-                    <AvatarImage src={"https://github.com/shadcn.png"} />
+                    <AvatarImage
+                      src={
+                        course?.creator.photoURL ||
+                        "https://github.com/shadcn.png"
+                      }
+                    />
                     <AvatarFallback>CN</AvatarFallback>
                   </Avatar>
-                  <p className="text-center truncate">Dharmendra chauhan</p>
+                  <p className="text-center truncate">
+                    {course?.creator.userName}
+                  </p>
                 </div>
-
+              </div>
+              <div className="flex justify-between gap-5">
                 <Badge
                   variant="default"
                   className="bg-blue-500 dark:bg-blue-900 text-white"
                 >
                   {course.courseLevel}
                 </Badge>
+                <h2>price: ₹ {course.coursePrice}</h2>
               </div>
-              <h2>price: ₹ {course.coursePrice}</h2>
             </div>
           </div>
         </CardContent>

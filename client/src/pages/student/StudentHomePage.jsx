@@ -1,7 +1,6 @@
 import React, { useEffect } from "react";
 import HeroSection from "./HeroSection";
 import Course from "./Course";
-import { SkeletonCard } from "@/components/SkeletonCard";
 import { useGetPublishedCoursesQuery } from "@/features/api/courseApi";
 import { toast } from "sonner";
 import { Loader } from "lucide-react";
@@ -18,6 +17,7 @@ const StudentHomePage = () => {
     }
     // console.log("data", data);
   }, [isSuccess, error]);
+
   return (
     <div className="flex flex-col gap-y-2">
       <HeroSection />
@@ -25,11 +25,12 @@ const StudentHomePage = () => {
 
       <div className="w-full max-w-7xl mx-auto grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 px-4 sm:px-6 lg:px-8">
         {isLoading ? (
-          <div className="flex h-full justify-center items-center">
-            <Loader className=" size-25" />
+          <div className="flex h-full w-screen justify-center items-center">
+            <Loader className="size-20 animate-spin" />
           </div>
         ) : (
           data.course.map((courseItem, indx) => {
+            // console.log("courseItem", courseItem);
             return <Course key={indx} course={courseItem} />;
           })
         )}

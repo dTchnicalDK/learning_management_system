@@ -1,3 +1,4 @@
+import path from "path";
 import { Course } from "../models/course.model.js";
 import {
   deleteMediaFromCloudinary,
@@ -27,7 +28,10 @@ export const getAllCourses = async (req, res) => {
 /////////////get  Published courses ////////////////
 export const getPublishedCourses = async (req, res) => {
   try {
-    const course = await Course.find({ isPublished: true }).lean().exec();
+    const course = await Course.find({ isPublished: true })
+      .populate({ path: "creator", select: "-password" })
+      .lean()
+      .exec();
     // console.log("courses", course);
     if (course.length <= 0) {
       return res.status(200).json({
@@ -54,11 +58,19 @@ export const getCourseById = async (req, res) => {
         .status(400)
         .json({ message: "id is must to get course", success: false });
     }
-    const course = await Course.findById(courseId);
+    const course = await Course.findById(courseId)
+      .populate({ path: "creator", select: "-password -__v" })
+      .populate({ path: "lectures" })
+      .populate({ path: "enrolledStudents", select: "name email" })
+      .lean()
+      .exec();
+
     if (course.length <= 0) {
-      return res
-        .status(400)
-        .json({ message: "no course created yet", success: true, course: [] });
+      return res.status(400).json({
+        message: "no course created yet",
+        success: true,
+        course: [],
+      });
     }
     return res
       .status(200)

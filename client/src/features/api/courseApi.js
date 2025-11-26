@@ -84,7 +84,6 @@ export const courseApi = createApi({
       invalidatesTags: ["Refresh_Lecture"],
     }),
 
-    // In your courseApi.js
     updateLecture: builder.mutation({
       query: (formData) => {
         // Extract IDs from the formData
