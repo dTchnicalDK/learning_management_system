@@ -15,6 +15,7 @@ import CreateLecture from "./pages/tutor/lecture/CreateLecture";
 import LecturesTable from "./pages/tutor/lecture/LecturesTable";
 import EditLecture from "./pages/tutor/lecture/EditLecture";
 import CourseDetails from "./pages/student/CourseDetails";
+import PaymentConfirmation from "./pages/student/PaymentConfirmationPage";
 
 function App() {
   return (
@@ -52,6 +53,10 @@ function App() {
           <Route index element={<StudentHomePage />} />
           <Route path="/:tab" element={<LoginPage />} />
           <Route path=":courseId/course-details" element={<CourseDetails />} />
+          <Route
+            path=":courseId/course-details/payment-confirmation"
+            element={<PaymentConfirmation />}
+          />
         </Route>
       </Routes>
     </>

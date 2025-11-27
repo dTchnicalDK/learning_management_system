@@ -1,13 +1,18 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { Button } from "./ui/button";
 import { useParams } from "react-router";
 import { toast } from "sonner";
 import axios from "axios";
 import { Key } from "lucide-react";
+import { useSelector } from "react-redux";
+import PaymentConfirmation from "@/pages/student/PaymentConfirmationPage";
 
 const PurchaseCourseButton = () => {
   const { courseId } = useParams();
-  console.log("courseId", courseId);
+  // console.log("courseId", courseId);
+  const { user, isAuthenticated } = useSelector((state) => state.auth);
+  const [paymentDetails, setPaymentDetails] = useState(null);
+  // console.log("user", user);
 
   //loading razorpay script
   const loadScript = (src) => {
@@ -38,9 +43,8 @@ const PurchaseCourseButton = () => {
         "http://localhost:3000/api/v1/payment/create-oreder",
         { courseId }
       );
-      console.log("created order", res);
+
       const order = res.data.data;
-      console.log("created order json", JSON.stringify(order));
 
       //actually making payment and then verifying
       const paymentObject = new window.Razorpay({
@@ -48,18 +52,20 @@ const PurchaseCourseButton = () => {
         order_id: order.id,
         ...order,
         handler: async (response) => {
-          console.log("rosponse obj", response);
           const option2 = {
             order_id: response.razorpay_order_id,
             payment_id: response.razorpay_payment_id,
             signature: response.razorpay_signature,
+            courseId,
+            userId: user._id,
           };
-          console.log("option2", option2);
+
           const verifyPayment = await axios
             .post("http://localhost:3000/api/v1/payment/verify-order", option2)
             .then((res) => {
-              console.log("status", res.status);
-              if (res.status) {
+              console.log("paydetails", res);
+              if (res.status === 200) {
+                setPaymentDetails(res.data.paymentDetails);
                 alert("payment successfull ");
               } else {
                 alert("payment un-successfull ! ");
@@ -69,6 +75,7 @@ const PurchaseCourseButton = () => {
         },
       });
       paymentObject.open();
+      // console.log("payment details", verifyPayment);
     } catch (error) {
       console.log("course buy erro", error);
       toast.error(error.message || error.data.message || "course buy error");
@@ -83,6 +90,7 @@ const PurchaseCourseButton = () => {
       >
         Buy Course Now
       </Button>
+      {paymentDetails && <PaymentConfirmation payment={paymentDetails} />}
     </div>
   );
 };
