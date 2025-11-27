@@ -6,6 +6,7 @@ import connectDb from "./db/connectDb.js";
 import userRouter from "./routes/user.router.js";
 import tutorRouter from "./routes/course.routes.js";
 import mediaRouter from "./routes/media.routes.js";
+import paymentRouter from "./routes/payment.routes.js";
 
 const app = express();
 const port = process.env.PORT || 4000;
@@ -28,6 +29,7 @@ app.use(cookieParser());
 app.use("/api/v1/media", mediaRouter);
 app.use("/api/v1/user", userRouter);
 app.use("/api/v1/tutor", tutorRouter);
+app.use("/api/v1/payment", paymentRouter);
 
 //connecting Db and starting server
 connectDb()

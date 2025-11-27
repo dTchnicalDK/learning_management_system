@@ -30,7 +30,6 @@ const StudentHomePage = () => {
           </div>
         ) : (
           data.course.map((courseItem, indx) => {
-            // console.log("courseItem", courseItem);
             return <Course key={indx} course={courseItem} />;
           })
         )}

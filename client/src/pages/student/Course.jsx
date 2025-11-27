@@ -31,7 +31,7 @@ const Course = ({ course }) => {
                 </Link>
               </CardTitle>
               <div className="avtar-batch flex justify-between items-center border-t-2 border-t-gray-950 py-1">
-                <div className="flex w-full justify-between gap-5 py-1">
+                <div className="flex w-full justify-between gap-3 ">
                   <Avatar>
                     <AvatarImage
                       src={

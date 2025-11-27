@@ -32,7 +32,7 @@ const CourseDetails = ({ course }) => {
   } = useGetCourseByIdQuery(courseId);
 
   const [sanitized, setSanitized] = useState("");
-  console.log("course, lecture ", courseData);
+  // console.log("course, lecture ", courseData);
   const videoRef = useRef(null);
 
   const handlePlayLecture = async (lecture) => {
